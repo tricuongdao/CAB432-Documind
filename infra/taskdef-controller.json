@@ -1,0 +1,42 @@
+{
+  "family": "n12136514-documind-controller",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": {"operatingSystemFamily": "LINUX", "cpuArchitecture": "X86_64"},
+  "taskRoleArn": "arn:aws:iam::901444280953:role/Task-Role-CAB432-ECS",
+  "executionRoleArn": "arn:aws:iam::901444280953:role/Execution-Role-CAB432-ECS",
+  "containerDefinitions": [
+    {
+      "name": "controller",
+      "image": "901444280953.dkr.ecr.ap-southeast-2.amazonaws.com/n12136514-documind-worker:latest",
+      "essential": true,
+      "command": ["python", "-u", "scaler/controller.py"],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/n12136514-documind-controller",
+          "awslogs-region": "ap-southeast-2",
+          "awslogs-stream-prefix": "controller",
+          "awslogs-create-group": "true"
+        }
+      },
+      "environment": [
+        {"name": "AWS_REGION", "value": "ap-southeast-2"},
+        {"name": "CLUSTER", "value": "n12136514-documind-cluster"},
+        {"name": "SERVICE", "value": "n12136514-documind-worker-svc"},
+        {"name": "TASK_DEFINITION", "value": "n12136514-documind-worker"},
+        {"name": "TARGET_BACKLOG_PER_TASK", "value": "2"},
+        {"name": "MAX_TASKS", "value": "6"},
+        {"name": "CONTROL_INTERVAL_SECONDS", "value": "60"},
+        {"name": "SUBNETS", "value": "subnet-075811427d5564cf9,subnet-05a3b8177138c8b14,subnet-04ca053dcbe5f49cc"},
+        {"name": "SECURITY_GROUP", "value": "sg-078997505ad1c6bbc"}
+      ]
+    }
+  ],
+  "tags": [
+    {"key": "purpose", "value": "assessment 3"},
+    {"key": "qut-username", "value": "n12136514@qut.edu.au"}
+  ]
+}

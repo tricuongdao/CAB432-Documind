@@ -1,0 +1,15 @@
+# build & runtime artifacts
+.build/
+__pycache__/
+*.pyc
+node_modules/
+.venv/
+dist/
+
+# logs and temp
+*.log
+*.tmp
+
+# OS noise
+Thumbs.db
+.DS_Store

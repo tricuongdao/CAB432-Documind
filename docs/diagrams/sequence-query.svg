@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 790" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#33456b"/></marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6a4fb6"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1d8a44"/></marker>
+  </defs>
+  <rect width="1200" height="790" fill="#ffffff"/>
+  <text x="20" y="30" font-size="16" font-weight="700" fill="#1d2b4f">Figure 4.2 — Query sequence (origin path and cached repeat)</text>
+
+  <g font-size="11.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">
+    <rect x="20"  y="52" width="150" height="34" rx="7" fill="#f7f9fc" stroke="#33456b"/><text x="95"  y="74">Browser</text>
+    <rect x="230" y="52" width="170" height="34" rx="7" fill="#eaf2ff" stroke="#2f5f9e"/><text x="315" y="74">API (Lambda)</text>
+    <rect x="460" y="52" width="200" height="34" rx="7" fill="#eefaf0" stroke="#2e7d32"/><text x="560" y="74">L1 cache (in-process)</text>
+    <rect x="720" y="52" width="200" height="34" rx="7" fill="#eefaf0" stroke="#2e7d32"/><text x="820" y="74">Stores: L2 · vectors · jobs</text>
+    <rect x="980" y="52" width="200" height="34" rx="7" fill="#f4efff" stroke="#6a4fb6"/><text x="1080" y="74">Bedrock models</text>
+  </g>
+  <g stroke="#c9d4e8" stroke-width="1">
+    <line x1="95" y1="86" x2="95" y2="756"/><line x1="315" y1="86" x2="315" y2="756"/>
+    <line x1="560" y1="86" x2="560" y2="756"/><line x1="820" y1="86" x2="820" y2="756"/>
+    <line x1="1080" y1="86" x2="1080" y2="756"/>
+  </g>
+
+  <g font-size="11" fill="#33456b">
+    <line x1="95" y1="112" x2="313" y2="112" stroke="#33456b" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="100" y="105">1. POST /api/query {question, topK:4}</text>
+    <line x1="315" y1="140" x2="558" y2="140" stroke="#1d8a44" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="320" y="133">2. cache probe — tier 1 (in-process, microseconds)</text>
+    <line x1="315" y1="168" x2="818" y2="168" stroke="#1d8a44" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="320" y="161">3. tier-1 miss → probe shared L2 row cache#&lt;hash&gt; (~5–15 ms) · HIT-L2 ⇒ backfill L1, respond</text>
+    <line x1="317" y1="196" x2="1077" y2="196" stroke="#6a4fb6" stroke-width="1.4" marker-end="url(#av)"/>
+    <text x="322" y="189">4. miss ⇒ embed the question (titan, 1024-dim, ≈0.15 s)</text>
+    <line x1="317" y1="224" x2="818" y2="224" stroke="#33456b" stroke-width="1.4" marker-end="url(#a)"/>
+    <text x="322" y="217">5. vector search, top 2×k; metadata (text, filename) rides with each vector</text>
+    <line x1="317" y1="252" x2="818" y2="252" stroke="#33456b" stroke-width="1.4" marker-end="url(#a)"/>
+    <text x="322" y="245">6. batch-get job rows; keep only COMPLETED (live) documents — expired chunks can never be cited</text>
+    <line x1="317" y1="280" x2="1077" y2="280" stroke="#6a4fb6" stroke-width="1.4" marker-end="url(#av)"/>
+    <text x="322" y="273">7. numbered excerpts [1..k] → grounded prompt → generate answer (gemma, ≈2.5 s)</text>
+    <line x1="317" y1="308" x2="818" y2="308" stroke="#1d8a44" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="322" y="301">8. cache-ahead-of-response: write L2 row (TTL 1 h) and L1 entry BEFORE responding</text>
+    <line x1="313" y1="336" x2="97" y2="336" stroke="#33456b" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="100" y="329">9. 200 OK {answer, sources[], cache:"MISS", latencyMs} — X-Cache: MISS</text>
+
+    <line x1="95" y1="386" x2="313" y2="386" stroke="#33456b" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="100" y="379">10. repeat (or another user asks the same question)</text>
+    <line x1="315" y1="414" x2="558" y2="414" stroke="#1d8a44" stroke-width="1.5" marker-end="url(#ag)"/>
+    <text x="320" y="407">11. tier-1 hit — no network hop at all</text>
+    <line x1="313" y1="442" x2="97" y2="442" stroke="#1d8a44" stroke-width="1.5" marker-end="url(#ag)"/>
+    <text x="100" y="435">12. 200 OK {… cache:"HIT-L1", latencyMs:0} — X-Cache: HIT-L1</text>
+  </g>
+
+  <rect x="20" y="474" width="1160" height="150" rx="10" fill="#f2f7fd" stroke="#2f5f9e" stroke-width="1.2"/>
+  <text x="40" y="500" font-size="12" font-weight="600" fill="#1d2b4f">Why each step exists</text>
+  <text x="40" y="522" font-size="11" fill="#33456b">• The cache KEY = hash(normalised question | topK | corpus version). The version marker invalidates every answer when the corpus changes, so stale citations cannot survive an upload or an expiry sweep.</text>
+  <text x="40" y="542" font-size="11" fill="#33456b">• Over-fetching (2×k) plus the live-job filter means the k excerpts actually used are chosen AFTER expiry/state checking — retrieval correctness is decoupled from storage cleanup timing.</text>
+  <text x="40" y="562" font-size="11" fill="#33456b">• Cache-ahead-of-response: if the HTTP response is lost after generation, the retry is a cache hit — failures at the edge become free retries instead of expensive re-generation.</text>
+  <text x="40" y="582" font-size="11" fill="#33456b">• The response always reports tier and latency (X-Cache + latencyMs), which is what the UI badge renders and what the cache experiment measured.</text>
+  <text x="40" y="606" font-size="10.5" fill="#5b6b8c">Observed: origin ≈2 663 ms end-to-end (embed + search + filter + generate) · cached ≈0 ms at L1 · L2 ≈5–15 ms when the shared row serves a cold instance.</text>
+
+  <text x="20" y="660" font-size="10.5" fill="#5b6b8c">Answer contract: answers are grounded ONLY in retrieved excerpts; when excerpts do not contain the answer the model is instructed to say so, rather than fall back to general knowledge.</text>
+  <text x="20" y="678" font-size="10.5" fill="#5b6b8c">Concurrency: API instances share nothing (stateless); tier 1 is per-instance, tier 2 is global — warm instances hit L1, cold instances still hit L2, both skip all model calls.</text>
+</svg>

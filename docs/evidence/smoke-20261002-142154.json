@@ -1,0 +1,99 @@
+{
+  "endpoint": "https://6q3jq7pfogqaxz77xtw5k5dxbq0spnpt.lambda-url.ap-southeast-2.on.aws",
+  "jobId": "job-264c3e9d1f",
+  "transitions": [],
+  "firstQuery": {
+    "tier": "?",
+    "latencyMs": null
+  },
+  "secondQuery": {
+    "tier": "HIT-L1",
+    "latencyMs": 0
+  },
+  "cacheStats": {
+    "backend": "memory-l1+dynamodb-l2",
+    "l1": {
+      "capacity": 512,
+      "entries": 2,
+      "hits": 1,
+      "misses": 74,
+      "sets": 74,
+      "evictions": 0,
+      "expired": 72,
+      "hitRate": 0.0133
+    },
+    "l2": {
+      "store": "DynamoDB items (cache#<hash>) in the jobs table",
+      "ttlSeconds": 3600
+    }
+  },
+  "checks": [
+    {
+      "check": "healthz 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "healthz models",
+      "ok": true,
+      "detail": "amazon.titan-embed-text-v2:0 / google.gemma-3-12b-it"
+    },
+    {
+      "check": "upload presign 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "presigned S3 PUT",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "job completed",
+      "ok": false,
+      "detail": "final status=None"
+    },
+    {
+      "check": "query origin 200",
+      "ok": false,
+      "detail": "HTTP 500"
+    },
+    {
+      "check": "query sources",
+      "ok": false,
+      "detail": "0 sources"
+    },
+    {
+      "check": "second ask cached",
+      "ok": true,
+      "detail": "tier=HIT-L1"
+    },
+    {
+      "check": "cache stats 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "mcp initialize",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "mcp tools/list",
+      "ok": true,
+      "detail": "3 tools"
+    },
+    {
+      "check": "mcp search_documents",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "admin cache purge",
+      "ok": true,
+      "detail": "HTTP 200"
+    }
+  ],
+  "passed": 10,
+  "failed": 3
+}

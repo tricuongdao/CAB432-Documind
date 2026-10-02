@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 780" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#33456b"/>
+    </marker>
+    <marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a5cf5"/>
+    </marker>
+  </defs>
+  <style>text{paint-order:stroke;stroke:#ffffff;stroke-width:3px;stroke-linejoin:round}</style>
+  <rect x="0" y="0" width="1180" height="780" fill="#ffffff"/>
+  <text x="24" y="34" font-size="17" font-weight="700" fill="#1d2b4f">DocuMind AI - vendor-agnostic architecture</text>
+  <text x="24" y="54" font-size="12.5" fill="#5b6b8c">Patterns: stateless API tier, event-driven ingestion, worker-pull queue processing, metric-based autoscaling, two-tier caching, TTL garbage collection, least-privilege identity.</text>
+
+  <!-- client -->
+  <rect x="24" y="96" width="150" height="72" rx="10" fill="#f7f9fc" stroke="#33456b" stroke-width="1.5"/>
+  <text x="99" y="126" font-size="13.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">Client</text>
+  <text x="99" y="144" font-size="11" fill="#5b6b8c" text-anchor="middle">Web UI (SPA)</text>
+  <text x="99" y="159" font-size="11" fill="#5b6b8c" text-anchor="middle">drag-drop + Q&amp;A chat</text>
+
+  <!-- api tier -->
+  <rect x="248" y="86" width="240" height="92" rx="10" fill="#f7f9fc" stroke="#2f5f9e" stroke-width="1.6"/>
+  <text x="368" y="114" font-size="13.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">API service (stateless, scales with requests)</text>
+  <rect x="266" y="126" width="96" height="40" rx="8" fill="#eaf2ff" stroke="#2f5f9e"/>
+  <text x="314" y="143" font-size="11" fill="#1d2b4f" text-anchor="middle">L1 cache</text>
+  <text x="314" y="157" font-size="10.5" fill="#5b6b8c" text-anchor="middle">in-process LRU+TTL</text>
+  <rect x="372" y="126" width="100" height="40" rx="8" fill="#eaf2ff" stroke="#2f5f9e"/>
+  <text x="422" y="143" font-size="11" fill="#1d2b4f" text-anchor="middle">L2 cache</text>
+  <text x="422" y="157" font-size="10.5" fill="#5b6b8c" text-anchor="middle">shared metadata item</text>
+  <text x="368" y="176" font-size="10.5" fill="#5b6b8c" text-anchor="middle">REST/JSON API, presigned uploads, MCP tools</text>
+
+  <!-- model service -->
+  <rect x="248" y="216" width="240" height="64" rx="10" fill="#f4efff" stroke="#6a4fb6" stroke-width="1.6"/>
+  <text x="368" y="244" font-size="13" font-weight="600" fill="#3c2b73" text-anchor="middle">Foundation-model service (managed)</text>
+  <text x="368" y="262" font-size="11" fill="#6a4fb6" text-anchor="middle">embeddings + answer generation</text>
+
+  <!-- stores column -->
+  <rect x="560" y="86" width="216" height="194" rx="10" fill="#f7f9fc" stroke="#2e7d32" stroke-width="1.6"/>
+  <text x="668" y="112" font-size="13" font-weight="600" fill="#1d2b4f" text-anchor="middle">Data stores</text>
+  <rect x="578" y="124" width="180" height="42" rx="8" fill="#eefaf0" stroke="#2e7d32"/>
+  <text x="668" y="142" font-size="11.5" fill="#1d2b4f" text-anchor="middle">Object store (unstructured)</text>
+  <text x="668" y="157" font-size="10.5" fill="#5b6b8c" text-anchor="middle">raw PDFs, text, summaries</text>
+  <rect x="578" y="174" width="180" height="42" rx="8" fill="#eefaf0" stroke="#2e7d32"/>
+  <text x="668" y="192" font-size="11.5" fill="#1d2b4f" text-anchor="middle">Structured store</text>
+  <text x="668" y="207" font-size="10.5" fill="#5b6b8c" text-anchor="middle">job states, cache items, TTL</text>
+  <rect x="578" y="224" width="180" height="42" rx="8" fill="#eefaf0" stroke="#2e7d32"/>
+  <text x="668" y="242" font-size="11.5" fill="#1d2b4f" text-anchor="middle">Vector index</text>
+  <text x="668" y="257" font-size="10.5" fill="#5b6b8c" text-anchor="middle">chunk embeddings + text</text>
+
+  <!-- queue + router -->
+  <rect x="840" y="86" width="150" height="76" rx="10" fill="#fff7ea" stroke="#b26a00" stroke-width="1.6"/>
+  <text x="915" y="114" font-size="12.5" font-weight="600" fill="#7a4a00" text-anchor="middle">Event router</text>
+  <text x="915" y="131" font-size="10.5" fill="#a06b1d" text-anchor="middle">filters upload prefix</text>
+  <text x="915" y="146" font-size="10.5" fill="#a06b1d" text-anchor="middle">(object-created events)</text>
+
+  <rect x="840" y="188" width="150" height="88" rx="10" fill="#fff7ea" stroke="#b26a00" stroke-width="1.6"/>
+  <text x="915" y="216" font-size="12.5" font-weight="600" fill="#7a4a00" text-anchor="middle">Message queue</text>
+  <text x="915" y="233" font-size="10.5" fill="#a06b1d" text-anchor="middle">durable buffer, visibility</text>
+  <text x="915" y="248" font-size="10.5" fill="#a06b1d" text-anchor="middle">timeout, bounded retries</text>
+  <text x="915" y="266" font-size="10.5" fill="#b23a3a" text-anchor="middle">+ dead-letter queue</text>
+
+  <!-- worker pool -->
+  <rect x="1024" y="86" width="132" height="190" rx="10" fill="#f0f7ff" stroke="#2f5f9e" stroke-width="1.6"/>
+  <text x="1090" y="112" font-size="12.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">Worker pool</text>
+  <text x="1090" y="128" font-size="10.5" fill="#5b6b8c" text-anchor="middle">containers</text>
+  <rect x="1040" y="140" width="100" height="34" rx="7" fill="#e2edff" stroke="#2f5f9e"/>
+  <text x="1090" y="161" font-size="10.5" fill="#1d2b4f" text-anchor="middle">extract + chunk</text>
+  <rect x="1040" y="182" width="100" height="34" rx="7" fill="#e2edff" stroke="#2f5f9e"/>
+  <text x="1090" y="203" font-size="10.5" fill="#1d2b4f" text-anchor="middle">embed + summarize</text>
+  <text x="1090" y="238" font-size="10.5" fill="#5b6b8c" text-anchor="middle">1 worker = 1 message</text>
+  <text x="1090" y="253" font-size="10.5" fill="#5b6b8c" text-anchor="middle">at a time</text>
+
+  <!-- autoscaling controller -->
+  <rect x="840" y="330" width="316" height="86" rx="10" fill="#f4efff" stroke="#6a4fb6" stroke-width="1.6"/>
+  <text x="998" y="358" font-size="13" font-weight="600" fill="#3c2b73" text-anchor="middle">Autoscaling controller</text>
+  <text x="998" y="376" font-size="11" fill="#6a4fb6" text-anchor="middle">target: backlog per worker = 2 messages</text>
+  <text x="998" y="392" font-size="11" fill="#6a4fb6" text-anchor="middle">scale out on backlog spike, scale to zero when idle</text>
+  <text x="998" y="407" font-size="10.5" fill="#8a5cf5" text-anchor="middle">reads queue-depth metric every 60 s, cooldowns 30 s / 120 s</text>
+
+  <!-- arrows: client -> api -->
+  <line x1="174" y1="132" x2="246" y2="132" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="210" y="124" font-size="10.5" fill="#5b6b8c" text-anchor="middle">HTTPS</text>
+  <!-- api -> stores -->
+  <line x1="488" y1="120" x2="576" y2="120" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="532" y="112" font-size="10.5" fill="#5b6b8c" text-anchor="middle">presign / read</text>
+  <line x1="488" y1="160" x2="576" y2="170" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <!-- api -> model -->
+  <line x1="368" y1="178" x2="368" y2="214" stroke="#6a4fb6" stroke-width="1.6" marker-end="url(#arrd)"/>
+  <text x="428" y="200" font-size="10.5" fill="#6a4fb6">embed / generate</text>
+  <!-- client upload direct to object store -->
+  <path d="M 150 168 C 150 260 420 300 578 150" fill="none" stroke="#2e7d32" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+  <text x="330" y="252" font-size="10.5" fill="#2e7d32">direct upload via presigned URL</text>
+  <!-- object -> router -->
+  <line x1="758" y1="120" x2="838" y2="120" stroke="#b26a00" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="798" y="112" font-size="10.5" fill="#a06b1d" text-anchor="middle">event</text>
+  <!-- router -> queue -->
+  <line x1="915" y1="162" x2="915" y2="186" stroke="#b26a00" stroke-width="1.6" marker-end="url(#arr)"/>
+  <!-- queue -> workers (pull) -->
+  <line x1="990" y1="200" x2="1022" y2="200" stroke="#b26a00" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="1006" y="192" font-size="10" fill="#a06b1d" text-anchor="middle">pull</text>
+  <!-- workers -> stores -->
+  <line x1="1030" y1="120" x2="760" y2="140" stroke="#33456b" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="898" y="122" font-size="10" fill="#5b6b8c">read raw, write artifacts</text>
+  <line x1="1032" y1="200" x2="760" y2="240" stroke="#33456b" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="896" y="230" font-size="10" fill="#5b6b8c">chunks + status</text>
+  <!-- workers -> model (dashed up-left) -->
+  <path d="M 1040 150 C 800 250 640 280 500 258" fill="none" stroke="#6a4fb6" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arrd)"/>
+  <text x="720" y="292" font-size="10.5" fill="#6a4fb6">embed chunks + summarize (batch)</text>
+  <!-- controller -> queue (reads) -->
+  <path d="M 930 328 C 930 300 915 296 913 278" fill="none" stroke="#8a5cf5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrd)"/>
+  <text x="852" y="316" font-size="10.5" fill="#8a5cf5">reads metric</text>
+  <!-- controller -> workers (capacity) -->
+  <path d="M 1156 372 C 1210 340 1210 240 1160 210" fill="none" stroke="#8a5cf5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrd)"/>
+  <text x="1204" y="300" font-size="10.5" fill="#8a5cf5" text-anchor="end" transform="rotate(90 1204 300)">sets capacity</text>
+
+  <!-- secrets / identity -->
+  <rect x="24" y="330" width="240" height="86" rx="10" fill="#fdf1f4" stroke="#b23a5a" stroke-width="1.5"/>
+  <text x="144" y="358" font-size="12.5" font-weight="600" fill="#7c2038" text-anchor="middle">Identity &amp; secrets</text>
+  <text x="144" y="376" font-size="11" fill="#a04a63" text-anchor="middle">least-privilege workload roles,</text>
+  <text x="144" y="392" font-size="11" fill="#a04a63" text-anchor="middle">managed secret store, scoped</text>
+  <text x="144" y="408" font-size="11" fill="#a04a63" text-anchor="middle">resource policies (queue, buckets)</text>
+  <line x1="264" y1="372" x2="248" y2="356" stroke="#b23a5a" stroke-width="1.3" marker-end="url(#arr)"/>
+  <line x1="266" y1="372" x2="1040" y2="110" stroke="#b23a5a" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>
+
+  <!-- observability -->
+  <rect x="24" y="446" width="240" height="86" rx="10" fill="#eef7f8" stroke="#17708a" stroke-width="1.5"/>
+  <text x="144" y="474" font-size="12.5" font-weight="600" fill="#0f4a5c" text-anchor="middle">Observability</text>
+  <text x="144" y="492" font-size="11" fill="#3d7c90" text-anchor="middle">metrics + structured logs,</text>
+  <text x="144" y="508" font-size="11" fill="#3d7c90" text-anchor="middle">dashboard, alarms on DLQ /</text>
+  <text x="144" y="524" font-size="11" fill="#3d7c90" text-anchor="middle">backlog / API errors</text>
+
+  <!-- garbage collection -->
+  <rect x="300" y="446" width="240" height="86" rx="10" fill="#f3f3f3" stroke="#666" stroke-width="1.5"/>
+  <text x="420" y="474" font-size="12.5" font-weight="600" fill="#333" text-anchor="middle">Garbage collection</text>
+  <text x="420" y="492" font-size="11" fill="#555" text-anchor="middle">24 h time-to-live on job rows,</text>
+  <text x="420" y="508" font-size="11" fill="#555" text-anchor="middle">lifecycle expiry on objects,</text>
+  <text x="420" y="524" font-size="11" fill="#555" text-anchor="middle">stale vectors filtered at query time</text>
+
+  <!-- flow legend -->
+  <rect x="576" y="446" width="580" height="240" rx="10" fill="#fbfcff" stroke="#8ea2c9" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="600" y="474" font-size="13" font-weight="600" fill="#1d2b4f">Primary flows</text>
+  <text x="600" y="500" font-size="11.5" fill="#33456b">1. Upload: client asks the API for a presigned URL, uploads straight to object storage (bandwidth never touches the API).</text>
+  <text x="600" y="522" font-size="11.5" fill="#33456b">2. Ingest: the object-created event is filtered by the router and lands in the durable queue; workers pull messages, extract, chunk, embed, summarize.</text>
+  <text x="600" y="544" font-size="11.5" fill="#33456b">3. Ask: the API embeds the question, retrieves nearest chunks from the vector index, generates a cited answer with the model service.</text>
+  <text x="600" y="566" font-size="11.5" fill="#33456b">4. Cache: repeated questions are served from L1 (process memory, sub-15 ms) or L2 (shared metadata item) before any model call.</text>
+  <text x="600" y="588" font-size="11.5" fill="#33456b">5. Scale: the controller compares queue backlog against 2 messages per worker and resizes the container pool; idle capacity goes to zero.</text>
+  <text x="600" y="610" font-size="11.5" fill="#33456b">6. Fault isolation: unparseable files take bounded retries then route to the dead-letter queue; alerts fire on depth.</text>
+  <text x="600" y="642" font-size="11" fill="#8ea2c9">Solid arrows: synchronous request/response. Amber: event flow. Violet: model + control loop. Dashed green: direct-to-storage upload.</text>
+  <text x="600" y="664" font-size="11" fill="#8ea2c9">Every component is stateless or stores state in a managed service; any instance can restart without data loss.</text>
+</svg>

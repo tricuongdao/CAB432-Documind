@@ -1,0 +1,4 @@
+**/__pycache__/
+**/*.pyc
+worker/test_local.py
+worker/.pytest_cache/

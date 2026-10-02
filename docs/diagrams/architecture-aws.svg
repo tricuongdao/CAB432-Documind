@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 820" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#33456b"/>
+    </marker>
+    <marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a5cf5"/>
+    </marker>
+    <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+  <style>text{paint-order:stroke;stroke:#ffffff;stroke-width:3px;stroke-linejoin:round}</style>
+  <rect x="0" y="0" width="1180" height="820" fill="#ffffff"/>
+  <text x="24" y="34" font-size="17" font-weight="700" fill="#1d2b4f">DocuMind AI - AWS implementation (ap-southeast-2, account 901444280953)</text>
+  <text x="24" y="54" font-size="12.5" fill="#5b6b8c">All resources prefixed n12136514- and tagged purpose=assessment 3 plus qut-username=n12136514@qut.edu.au. Shared course identities: CAB432-Lambda-Role and Task-Role-CAB432-ECS / Execution-Role-CAB432-ECS.</text>
+
+  <!-- account boundary -->
+  <rect x="16" y="72" width="1148" height="652" rx="14" fill="#fbfcff" stroke="#8ea2c9" stroke-width="1.4" stroke-dasharray="7 5"/>
+  <text x="34" y="96" font-size="11.5" fill="#8ea2c9">AWS account 901444280953 · region ap-southeast-2 (Sydney)</text>
+
+  <!-- client -->
+  <rect x="36" y="120" width="150" height="76" rx="10" fill="#f7f9fc" stroke="#33456b" stroke-width="1.5"/>
+  <text x="111" y="150" font-size="13" font-weight="600" fill="#1d2b4f" text-anchor="middle">Client</text>
+  <text x="111" y="168" font-size="10.5" fill="#5b6b8c" text-anchor="middle">React SPA (static)</text>
+  <text x="111" y="183" font-size="10.5" fill="#5b6b8c" text-anchor="middle">served by Lambda origin</text>
+
+  <!-- api gateway -->
+  <rect x="236" y="112" width="170" height="92" rx="10" fill="#eaf2ff" stroke="#2f5f9e" stroke-width="1.6"/>
+  <text x="321" y="140" font-size="12.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">API Gateway (HTTP)</text>
+  <text x="321" y="158" font-size="10.5" fill="#2f5f9e" text-anchor="middle">shared course gateway rqy6cawtyg</text>
+  <text x="321" y="174" font-size="10.5" fill="#2f5f9e" text-anchor="middle">ANY /documind, /documind/{proxy+}</text>
+  <text x="321" y="190" font-size="10.5" fill="#8ea2c9" text-anchor="middle">additive routes; A2 routes untouched</text>
+
+  <!-- lambda api -->
+  <rect x="456" y="104" width="200" height="108" rx="10" fill="#f7f9fc" stroke="#2f5f9e" stroke-width="1.6"/>
+  <text x="556" y="132" font-size="12.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">Lambda · n12136514-documind-api</text>
+  <text x="556" y="150" font-size="10.5" fill="#5b6b8c" text-anchor="middle">FastAPI via Mangum, python3.12, 1024 MB</text>
+  <rect x="472" y="160" width="80" height="40" rx="8" fill="#e2edff" stroke="#2f5f9e"/>
+  <text x="512" y="177" font-size="10.5" fill="#1d2b4f" text-anchor="middle">L1 cache</text>
+  <text x="512" y="191" font-size="10" fill="#5b6b8c" text-anchor="middle">in-process</text>
+  <rect x="560" y="160" width="80" height="40" rx="8" fill="#e2edff" stroke="#2f5f9e"/>
+  <text x="600" y="177" font-size="10.5" fill="#1d2b4f" text-anchor="middle">L2 cache</text>
+  <text x="600" y="191" font-size="10" fill="#5b6b8c" text-anchor="middle">cache# rows</text>
+  <text x="556" y="228" font-size="10.5" fill="#5b6b8c" text-anchor="middle">/healthz · /api/upload · /api/jobs · /api/query · /api/stats · /mcp</text>
+
+  <!-- bedrock -->
+  <rect x="456" y="252" width="200" height="86" rx="10" fill="#f4efff" stroke="#6a4fb6" stroke-width="1.6"/>
+  <text x="556" y="280" font-size="12.5" font-weight="600" fill="#3c2b73" text-anchor="middle">Amazon Bedrock</text>
+  <text x="556" y="298" font-size="10.5" fill="#6a4fb6" text-anchor="middle">titan-embed-text-v2:0 · 1024-dim</text>
+  <text x="556" y="314" font-size="10.5" fill="#6a4fb6" text-anchor="middle">google.gemma-3-12b-it · RAG answers</text>
+  <text x="556" y="330" font-size="10" fill="#8a5cf5" text-anchor="middle">allow-listed models only (Claude/Nova denied by sandbox)</text>
+
+  <!-- s3 objects -->
+  <rect x="712" y="104" width="204" height="108" rx="10" fill="#eefaf0" stroke="#2e7d32" stroke-width="1.6"/>
+  <text x="814" y="130" font-size="12" font-weight="600" fill="#1d2b4f" text-anchor="middle">S3 · n12136514-documind-storage</text>
+  <text x="814" y="148" font-size="10.5" fill="#2e7d32" text-anchor="middle">uploads/ raw PDFs (presigned PUT)</text>
+  <text x="814" y="164" font-size="10.5" fill="#2e7d32" text-anchor="middle">chunks/ extracted text JSON</text>
+  <text x="814" y="180" font-size="10.5" fill="#2e7d32" text-anchor="middle">summaries/ markdown exports</text>
+  <text x="814" y="198" font-size="10" fill="#5b6b8c" text-anchor="middle">SSE-S3, public access blocked, 24 h lifecycle GC</text>
+
+  <!-- dynamodb -->
+  <rect x="712" y="240" width="204" height="86" rx="10" fill="#eefaf0" stroke="#2e7d32" stroke-width="1.6"/>
+  <text x="814" y="266" font-size="12" font-weight="600" fill="#1d2b4f" text-anchor="middle">DynamoDB · n12136514-documind-jobs</text>
+  <text x="814" y="284" font-size="10.5" fill="#2e7d32" text-anchor="middle">job rows + cache# rows (payloadJson)</text>
+  <text x="814" y="300" font-size="10.5" fill="#2e7d32" text-anchor="middle">on-demand, TTL attr = epoch + 24 h</text>
+  <text x="814" y="316" font-size="10" fill="#5b6b8c" text-anchor="middle">single-table access: PK jobId, GSI listKey+createdAt</text>
+
+  <!-- s3 vectors -->
+  <rect x="712" y="354" width="204" height="78" rx="10" fill="#eefaf0" stroke="#2e7d32" stroke-width="1.6"/>
+  <text x="814" y="380" font-size="12" font-weight="600" fill="#1d2b4f" text-anchor="middle">S3 Vectors · n12136514-documind-vectors</text>
+  <text x="814" y="398" font-size="10.5" fill="#2e7d32" text-anchor="middle">index documind-chunks, 1024-dim cosine</text>
+  <text x="814" y="414" font-size="10" fill="#5b6b8c" text-anchor="middle">keys jobId#chunkIdx; metadata jobId, filename, text</text>
+
+  <!-- eventbridge + sqs -->
+  <rect x="956" y="104" width="188" height="76" rx="10" fill="#fff7ea" stroke="#b26a00" stroke-width="1.6"/>
+  <text x="1050" y="130" font-size="12" font-weight="600" fill="#7a4a00" text-anchor="middle">EventBridge rule</text>
+  <text x="1050" y="148" font-size="10.5" fill="#a06b1d" text-anchor="middle">n12136514-documind-upload-rule</text>
+  <text x="1050" y="164" font-size="10.5" fill="#a06b1d" text-anchor="middle">ObjectCreated, prefix uploads/</text>
+
+  <rect x="956" y="212" width="188" height="106" rx="10" fill="#fff7ea" stroke="#b26a00" stroke-width="1.6"/>
+  <text x="1050" y="238" font-size="12" font-weight="600" fill="#7a4a00" text-anchor="middle">SQS n12136514-documind-queue</text>
+  <text x="1050" y="256" font-size="10.5" fill="#a06b1d" text-anchor="middle">visibility timeout 300 s, retention 4 days</text>
+  <text x="1050" y="272" font-size="10.5" fill="#a06b1d" text-anchor="middle">long polling (WaitTimeSeconds=20)</text>
+  <text x="1050" y="292" font-size="10.5" fill="#b23a3a" text-anchor="middle">DLQ n12136514-documind-dlq</text>
+  <text x="1050" y="308" font-size="10.5" fill="#b23a3a" text-anchor="middle">maxReceiveCount = 3</text>
+
+  <!-- ecs cluster group -->
+  <rect x="36" y="392" width="640" height="312" rx="12" fill="#f7f9fc" stroke="#2f5f9e" stroke-width="1.6"/>
+  <text x="56" y="418" font-size="12.5" font-weight="600" fill="#1d2b4f">Amazon ECS cluster n12136514-documind-cluster (Fargate, FARGATE_SPOT)</text>
+  <rect x="56" y="432" width="270" height="150" rx="10" fill="#f0f7ff" stroke="#2f5f9e"/>
+  <text x="191" y="456" font-size="11.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">Worker service n12136514-documind-worker-svc</text>
+  <text x="191" y="474" font-size="10.5" fill="#5b6b8c" text-anchor="middle">1 vCPU / 2 GB tasks, desired 0-4+</text>
+  <rect x="72" y="486" width="238" height="38" rx="7" fill="#e2edff" stroke="#2f5f9e"/>
+  <text x="191" y="503" font-size="10.5" fill="#1d2b4f" text-anchor="middle">poll SQS -&gt; download PDF -&gt; extract (pdfplumber)</text>
+  <text x="191" y="517" font-size="10.5" fill="#1d2b4f" text-anchor="middle">chunk (overlap) -&gt; embed -&gt; summarize -&gt; store</text>
+  <text x="191" y="544" font-size="10" fill="#5b6b8c" text-anchor="middle">STATUS=COMPLETED, TTL epoch + 24 h; worker exits</text>
+  <text x="191" y="560" font-size="10" fill="#5b6b8c" text-anchor="middle">after idle period so desired capacity can reach zero</text>
+  <text x="191" y="576" font-size="10" fill="#5b6b8c" text-anchor="middle">corrupt/password PDF -&gt; bounded retries -&gt; DLQ</text>
+
+  <rect x="342" y="432" width="318" height="150" rx="10" fill="#f4efff" stroke="#6a4fb6"/>
+  <text x="501" y="456" font-size="11.5" font-weight="600" fill="#3c2b73" text-anchor="middle">Controller service n12136514-documind-controller-svc</text>
+  <text x="501" y="474" font-size="10.5" fill="#6a4fb6" text-anchor="middle">metric-based autoscaling loop (custom, 60 s cadence)</text>
+  <text x="501" y="494" font-size="10.5" fill="#6a4fb6" text-anchor="middle">backlog = visible + in-flight messages</text>
+  <text x="501" y="510" font-size="10.5" fill="#6a4fb6" text-anchor="middle">target 2 messages/worker -&gt; desired = ceil(backlog/2)</text>
+  <text x="501" y="526" font-size="10.5" fill="#6a4fb6" text-anchor="middle">clamp 0..4; out 30 s, in 120 s cooldowns</text>
+  <text x="501" y="542" font-size="10.5" fill="#6a4fb6" text-anchor="middle">scale 0-&gt;1 via ecs:RunTask with task-def overrides</text>
+  <text x="501" y="558" font-size="10.5" fill="#6a4fb6" text-anchor="middle">scale 1-&gt;0 via update_service desiredCount 0</text>
+  <text x="501" y="576" font-size="10" fill="#8a5cf5" text-anchor="middle">runs as a long-lived task; task role holds ECS + SQS + CloudWatch perms</text>
+
+  <rect x="56" y="598" width="604" height="86" rx="10" fill="#eaf2ff" stroke="#2f5f9e"/>
+  <text x="76" y="622" font-size="11.5" font-weight="600" fill="#1d2b4f">Supporting services</text>
+  <text x="76" y="642" font-size="10.5" fill="#2f5f9e">ECR n12136514-documind-worker (linux/amd64 image) · Secrets Manager n12136514-documind-secrets (apiAdminKey) ·</text>
+  <text x="76" y="658" font-size="10.5" fill="#2f5f9e">CloudWatch: log groups per service, dashboard n12136514-documind-dashboard, alarms on DLQ depth / backlog / API errors ·</text>
+  <text x="76" y="674" font-size="10.5" fill="#2f5f9e">EventBridge Scheduler group n12136514-documind-schedules (1-minute tick, disabled in steady state) · VPC default subnets, default SG (tasks are egress-only)</text>
+
+  <!-- secrets box right -->
+  <rect x="956" y="354" width="188" height="78" rx="10" fill="#fdf1f4" stroke="#b23a5a" stroke-width="1.5"/>
+  <text x="1050" y="380" font-size="12" font-weight="600" fill="#7c2038" text-anchor="middle">Secrets Manager</text>
+  <text x="1050" y="398" font-size="10.5" fill="#a04a63" text-anchor="middle">n12136514-documind-secrets</text>
+  <text x="1050" y="414" font-size="10" fill="#a04a63" text-anchor="middle">admin key for MCP tools; least-privilege reads</text>
+
+  <!-- observability box -->
+  <rect x="956" y="462" width="188" height="106" rx="10" fill="#eef7f8" stroke="#17708a" stroke-width="1.5"/>
+  <text x="1050" y="488" font-size="12" font-weight="600" fill="#0f4a5c" text-anchor="middle">CloudWatch</text>
+  <text x="1050" y="506" font-size="10.5" fill="#3d7c90" text-anchor="middle">dashboard + alarms + logs</text>
+  <text x="1050" y="522" font-size="10.5" fill="#3d7c90" text-anchor="middle">queue depth, task CPU/mem,</text>
+  <text x="1050" y="538" font-size="10.5" fill="#3d7c90" text-anchor="middle">cache hit ratio, latency EMF</text>
+  <text x="1050" y="556" font-size="10" fill="#3d7c90" text-anchor="middle">p50/p95/p99 from load harness CSVs</text>
+
+  <!-- arrows -->
+  <line x1="186" y1="158" x2="234" y2="158" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="210" y="150" font-size="10" fill="#5b6b8c" text-anchor="middle">HTTPS</text>
+  <line x1="406" y1="158" x2="454" y2="158" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="430" y="150" font-size="10" fill="#5b6b8c" text-anchor="middle">proxy</text>
+  <line x1="656" y1="140" x2="710" y2="140" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="683" y="132" font-size="10" fill="#5b6b8c" text-anchor="middle">presign</text>
+  <line x1="656" y1="176" x2="710" y2="272" stroke="#33456b" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="700" y="212" font-size="10" fill="#5b6b8c" text-anchor="end">read/write</text>
+  <line x1="606" y1="212" x2="556" y2="250" stroke="#6a4fb6" stroke-width="1.6" marker-end="url(#arrd)"/>
+  <text x="622" y="236" font-size="10" fill="#6a4fb6">embed/generate</text>
+  <!-- client direct upload -->
+  <path d="M 111 196 C 111 250 420 236 710 148" fill="none" stroke="#2e7d32" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrg)"/>
+  <text x="360" y="268" font-size="10" fill="#2e7d32">presigned PUT direct to S3</text>
+  <!-- s3 -> eventbridge -> sqs -->
+  <line x1="916" y1="140" x2="954" y2="140" stroke="#b26a00" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="935" y="132" font-size="9.5" fill="#a06b1d" text-anchor="middle">event</text>
+  <line x1="1050" y1="180" x2="1050" y2="210" stroke="#b26a00" stroke-width="1.6" marker-end="url(#arr)"/>
+  <!-- sqs -> worker svc -->
+  <line x1="954" y1="265" x2="250" y2="432" stroke="#b26a00" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+  <text x="640" y="352" font-size="10.5" fill="#a06b1d">worker-pull: message per task, visibility timeout</text>
+  <!-- controller reads sqs + acts on ecs -->
+  <path d="M 620 452 C 700 440 780 380 956 300" fill="none" stroke="#8a5cf5" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrd)"/>
+  <text x="806" y="398" font-size="10.5" fill="#8a5cf5">reads queue metrics</text>
+  <line x1="342" y1="500" x2="328" y2="500" stroke="#8a5cf5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrd)"/>
+  <text x="335" y="492" font-size="9.5" fill="#8a5cf5" text-anchor="middle">resizes</text>
+  <!-- workers -> stores -->
+  <line x1="330" y1="440" x2="710" y2="150" stroke="#33456b" stroke-width="1.3" marker-end="url(#arr)"/>
+  <text x="520" y="300" font-size="10" fill="#5b6b8c">read raw PDF · write chunks + summaries</text>
+  <line x1="342" y1="560" x2="710" y2="400" stroke="#33456b" stroke-width="1.3" marker-end="url(#arr)"/>
+  <text x="536" y="490" font-size="10" fill="#5b6b8c">put vectors + status</text>
+  <!-- worker -> bedrock dashed -->
+  <path d="M 342 470 C 400 420 440 340 500 338" fill="none" stroke="#6a4fb6" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arrd)"/>
+  <text x="420" y="380" font-size="10" fill="#6a4fb6">embeddings</text>
+
+  <!-- footer -->
+  <text x="24" y="752" font-size="11" fill="#5b6b8c">Notes: CloudFront and ElastiCache are not permitted under the course account policy, so edge caching is documented as the target-state design and delivery caching is provided by the two-tier in-service cache.</text>
+  <text x="24" y="770" font-size="11" fill="#5b6b8c">The API is reachable both through the shared API Gateway route and via a Lambda function URL fallback, which also serves the static frontend for single-origin delivery.</text>
+  <text x="24" y="788" font-size="11" fill="#5b6b8c">All service-to-service calls stay inside the Sydney region and use AWS IAM identity rather than embedded credentials; the only client secret is the MCP admin key held in Secrets Manager.</text>
+</svg>

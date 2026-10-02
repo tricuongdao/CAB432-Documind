@@ -1,0 +1,45 @@
+{
+  "family": "n12136514-documind-worker",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "runtimePlatform": {"operatingSystemFamily": "LINUX", "cpuArchitecture": "X86_64"},
+  "taskRoleArn": "arn:aws:iam::901444280953:role/Task-Role-CAB432-ECS",
+  "executionRoleArn": "arn:aws:iam::901444280953:role/Execution-Role-CAB432-ECS",
+  "containerDefinitions": [
+    {
+      "name": "worker",
+      "image": "901444280953.dkr.ecr.ap-southeast-2.amazonaws.com/n12136514-documind-worker:latest",
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/n12136514-documind-worker",
+          "awslogs-region": "ap-southeast-2",
+          "awslogs-stream-prefix": "worker",
+          "awslogs-create-group": "true"
+        }
+      },
+      "environment": [
+        {"name": "AWS_REGION", "value": "ap-southeast-2"},
+        {"name": "S3_BUCKET", "value": "n12136514-documind-storage"},
+        {"name": "SQS_QUEUE_URL", "value": "https://sqs.ap-southeast-2.amazonaws.com/901444280953/n12136514-documind-queue"},
+        {"name": "SQS_DLQ_URL", "value": "https://sqs.ap-southeast-2.amazonaws.com/901444280953/n12136514-documind-dlq"},
+        {"name": "JOBS_TABLE", "value": "n12136514-documind-jobs"},
+        {"name": "VECTOR_BUCKET", "value": "n12136514-documind-vectors"},
+        {"name": "VECTOR_INDEX", "value": "documind-chunks"},
+        {"name": "EMBED_MODEL_ID", "value": "amazon.titan-embed-text-v2:0"},
+        {"name": "EMBED_DIM", "value": "1024"},
+        {"name": "SUMMARY_MODEL_ID", "value": "google.gemma-3-12b-it"},
+        {"name": "ARTIFACT_TTL_HOURS", "value": "24"},
+        {"name": "WORKER_IDLE_EXIT_SECONDS", "value": "60"},
+        {"name": "LOG_LEVEL", "value": "INFO"}
+      ]
+    }
+  ],
+  "tags": [
+    {"key": "purpose", "value": "assessment 3"},
+    {"key": "qut-username", "value": "n12136514@qut.edu.au"}
+  ]
+}

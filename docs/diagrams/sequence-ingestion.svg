@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#33456b"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b26a00"/></marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6a4fb6"/></marker>
+  </defs>
+  <rect width="1200" height="860" fill="#ffffff"/>
+  <text x="20" y="30" font-size="16" font-weight="700" fill="#1d2b4f">Figure 4.1 — Ingestion sequence (upload to completed)</text>
+
+  <!-- lifeline headers -->
+  <g font-size="11.5" font-weight="600" fill="#1d2b4f" text-anchor="middle">
+    <rect x="20"  y="52" width="150" height="34" rx="7" fill="#f7f9fc" stroke="#33456b"/><text x="95"  y="74">Browser</text>
+    <rect x="210" y="52" width="150" height="34" rx="7" fill="#eaf2ff" stroke="#2f5f9e"/><text x="285" y="74">API (Lambda)</text>
+    <rect x="400" y="52" width="230" height="34" rx="7" fill="#eefaf0" stroke="#2e7d32"/><text x="515" y="74">S3 · EventBridge · SQS</text>
+    <rect x="670" y="52" width="150" height="34" rx="7" fill="#f4efff" stroke="#6a4fb6"/><text x="745" y="74">Controller</text>
+    <rect x="860" y="52" width="150" height="34" rx="7" fill="#f0f7ff" stroke="#2f5f9e"/><text x="935" y="74">Worker (ECS)</text>
+    <rect x="1050" y="52" width="130" height="34" rx="7" fill="#f4efff" stroke="#6a4fb6"/><text x="1115" y="74">Bedrock · stores</text>
+  </g>
+  <g stroke="#c9d4e8" stroke-width="1">
+    <line x1="95" y1="86" x2="95" y2="826"/><line x1="285" y1="86" x2="285" y2="826"/>
+    <line x1="515" y1="86" x2="515" y2="826"/><line x1="745" y1="86" x2="745" y2="826"/>
+    <line x1="935" y1="86" x2="935" y2="826"/><line x1="1115" y1="86" x2="1115" y2="826"/>
+  </g>
+
+  <!-- arrows -->
+  <g font-size="11" fill="#33456b">
+    <line x1="95" y1="112" x2="283" y2="112" stroke="#33456b" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="100" y="105">1. POST /api/upload {filename,size}</text>
+    <line x1="285" y1="140" x2="513" y2="140" stroke="#2e7d32" stroke-width="1.4" marker-end="url(#a)"/>
+    <text x="290" y="133">2. create job row — status CREATED, TTL = now + 24 h</text>
+    <line x1="283" y1="168" x2="97" y2="168" stroke="#33456b" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="100" y="161">3. {jobId, presigned PUT URL (15 min)}</text>
+    <line x1="95" y1="196" x2="513" y2="196" stroke="#2e7d32" stroke-width="1.4" marker-end="url(#a)"/>
+    <text x="100" y="189">4. PUT PDF bytes directly to object storage (never through the API)</text>
+    <line x1="515" y1="224" x2="745" y2="252" stroke="#b26a00" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ao)"/>
+    <text x="522" y="217">5. ObjectCreated event (prefix uploads/) → rule → queue</text>
+    <line x1="745" y1="280" x2="517" y2="280" stroke="#b26a00" stroke-width="1.4" marker-end="url(#ao)"/>
+    <text x="522" y="273">6. read backlog metric (every 60 s)</text>
+    <line x1="745" y1="308" x2="933" y2="308" stroke="#6a4fb6" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#av)"/>
+    <text x="750" y="301">7. desired = ceil(backlog / 2), clamp 0–6 → start worker tasks</text>
+    <line x1="933" y1="336" x2="517" y2="336" stroke="#b26a00" stroke-width="1.4" marker-end="url(#ao)"/>
+    <text x="522" y="329">8. receive message (long poll, 20 s), 300 s visibility lease</text>
+    <line x1="935" y1="364" x2="517" y2="364" stroke="#33456b" stroke-width="1.3" marker-end="url(#a)"/>
+    <text x="522" y="357">9. download PDF</text>
+    <line x1="935" y1="392" x2="1113" y2="392" stroke="#6a4fb6" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="940" y="385">10. embed chunks (4 concurrent) → put vectors (keys jobId#idx)</text>
+    <line x1="935" y1="420" x2="517" y2="420" stroke="#2e7d32" stroke-width="1.3" marker-end="url(#a)"/>
+    <text x="522" y="413">11. write chunks/&lt;jobId&gt;.json artifact</text>
+    <line x1="935" y1="448" x2="1113" y2="448" stroke="#6a4fb6" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="940" y="441">12. summarise (first 14 000 chars) with generation model</text>
+    <line x1="935" y1="476" x2="517" y2="476" stroke="#2e7d32" stroke-width="1.3" marker-end="url(#a)"/>
+    <text x="522" y="469">13. write summaries/&lt;jobId&gt;.md</text>
+    <line x1="935" y1="504" x2="287" y2="504" stroke="#33456b" stroke-width="1.3"/>
+    <text x="300" y="497">14. job row: PROCESSING → EMBEDDING → COMPLETED (+ timings)</text>
+    <line x1="935" y1="532" x2="517" y2="532" stroke="#b26a00" stroke-width="1.4" marker-end="url(#ao)"/>
+    <text x="522" y="525">15. delete message (only after everything above succeeded)</text>
+    <line x1="935" y1="560" x2="935" y2="588" stroke="#8ea2c9" stroke-width="1.4" stroke-dasharray="4 4"/>
+    <text x="942" y="580">16. idle 60 s → worker exits; controller returns pool toward 0</text>
+  </g>
+
+  <!-- failure callout -->
+  <rect x="20" y="620" width="1160" height="100" rx="10" fill="#fdf6f8" stroke="#b23a5a" stroke-width="1.3"/>
+  <text x="40" y="646" font-size="12" font-weight="600" fill="#7c2038">Failure branches (any step)</text>
+  <text x="40" y="668" font-size="11" fill="#a04a63">• Transient error: message is NOT deleted → visibility lease expires → another worker receives and retries identically (idempotent vector keys; chunk writes overwrite).</text>
+  <text x="40" y="686" font-size="11" fill="#a04a63">• Permanent error (password-protected/corrupt): worker routes the message to the dead-letter queue with a classified reason and marks the job FAILED — bounded attempts, alarm fires, pool unaffected.</text>
+  <text x="40" y="704" font-size="11" fill="#a04a63">• Worker killed mid-work: lease expires; redelivery handles it. Nothing is lost; the queue, not the worker, owns delivery state.</text>
+
+  <text x="20" y="748" font-size="10.5" fill="#5b6b8c">Observed timings (one-document run): presign &lt;0.3 s · upload 0.2–2 s · worker cold start ≈25 s · extract ≈0.56 s · embed ≈0.55 s · summarise ≈5.1 s · total end-to-end ≈30 s.</text>
+  <text x="20" y="766" font-size="10.5" fill="#5b6b8c">Statuses: CREATED → PROCESSING → EMBEDDING → (SUMMARISING) → COMPLETED | FAILED (+error). TTL is set at creation so even abandoned jobs expire.</text>
+</svg>

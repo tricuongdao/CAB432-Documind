@@ -1,0 +1,5 @@
+# API Lambda runtime dependencies. boto3/botocore are bundled explicitly so
+# the deployment always has a current SDK with s3vectors support.
+fastapi>=0.115,<1
+mangum>=0.19,<1
+boto3>=1.39,<2

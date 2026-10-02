@@ -1,0 +1,826 @@
+{
+  "mode": "cache",
+  "endpoint": "https://6q3jq7pfogqaxz77xtw5k5dxbq0spnpt.lambda-url.ap-southeast-2.on.aws",
+  "stats": {
+    "origin": {
+      "n": 50,
+      "p50": 102,
+      "p95": 3135,
+      "p99": 3471,
+      "mean": 1181.1
+    },
+    "cached": {
+      "n": 50,
+      "p50": 46,
+      "p95": 132,
+      "p99": 208,
+      "mean": 60.2
+    },
+    "repeatTiers": {
+      "HIT-L1": 50
+    },
+    "burst": [
+      {
+        "ms": 45,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 166,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 176,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 191,
+        "tier": "HIT-L2"
+      },
+      {
+        "ms": 323,
+        "tier": "HIT-L2"
+      },
+      {
+        "ms": 164,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 146,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 173,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 193,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 182,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 193,
+        "tier": "HIT-L1"
+      },
+      {
+        "ms": 144,
+        "tier": "HIT-L1"
+      }
+    ],
+    "speedupP50": 2.3
+  },
+  "results": [
+    {
+      "q": "How does the system handle password protected documents?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2902,
+        "tier": "MISS",
+        "serverMs": 2408
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 48,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens to messages that repeatedly fail processing?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 3135,
+        "tier": "MISS",
+        "serverMs": 3084
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 52,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why is a visibility timeout important for queue workers?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2629,
+        "tier": "MISS",
+        "serverMs": 2580
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 44,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the in-process cache achieve sub-fifteen-millisecond responses?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1973,
+        "tier": "MISS",
+        "serverMs": 1927
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 45,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is the second cache tier and why does it exist?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1801,
+        "tier": "MISS",
+        "serverMs": 1747
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the autoscaler decide how many workers to run?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 3382,
+        "tier": "MISS",
+        "serverMs": 3339
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 49,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is scale to zero and what does it cost?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1910,
+        "tier": "MISS",
+        "serverMs": 1865
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 42,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why do cache keys include a corpus version marker?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1317,
+        "tier": "MISS",
+        "serverMs": 1274
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 39,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How do pre-signed uploads keep the storage bucket private?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2050,
+        "tier": "MISS",
+        "serverMs": 2006
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 38,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What does the dead letter queue preserve for operators?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 3040,
+        "tier": "MISS",
+        "serverMs": 2995
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 53,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How are expired documents excluded from answers?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2442,
+        "tier": "MISS",
+        "serverMs": 2384
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 47,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What observations feed the scaling control loop?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2555,
+        "tier": "MISS",
+        "serverMs": 2493
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How is cosine similarity used to find relevant passages?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 3471,
+        "tier": "MISS",
+        "serverMs": 3419
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 42,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why over-fetch and rerank instead of relying on top-k alone?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2618,
+        "tier": "MISS",
+        "serverMs": 2563
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 41,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What roles does least privilege assign to the document processor?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2295,
+        "tier": "MISS",
+        "serverMs": 2180
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 52,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does bounded retry with backoff separate failure classes?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2614,
+        "tier": "MISS",
+        "serverMs": 2567
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 40,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why alarm on dead letter queue depth?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2109,
+        "tier": "MISS",
+        "serverMs": 2063
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 44,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens when the queue backlog is empty?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2957,
+        "tier": "MISS",
+        "serverMs": 2914
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How do workers self-terminate in the standalone task pool?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2192,
+        "tier": "MISS",
+        "serverMs": 2145
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 45,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens to artifacts after twenty four hours?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 51,
+        "tier": "HIT-L2",
+        "serverMs": 3
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the summary export work?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2529,
+        "tier": "MISS",
+        "serverMs": 2485
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 59,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is stored in the vector index metadata?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1655,
+        "tier": "MISS",
+        "serverMs": 1605
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 42,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the API flag cache hits to clients?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 1017,
+        "tier": "MISS",
+        "serverMs": 964
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 61,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why compare desired against current capacity every tick?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2762,
+        "tier": "MISS",
+        "serverMs": 2699
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 206,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What latency tradeoffs come with cold container starts?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 2148,
+        "tier": "MISS",
+        "serverMs": 2100
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 115,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the system handle password protected documents?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 93,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 108,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens to messages that repeatedly fail processing?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 61,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 132,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why is a visibility timeout important for queue workers?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 102,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 101,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the in-process cache achieve sub-fifteen-millisecond responses?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 102,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 102,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is the second cache tier and why does it exist?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 102,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 118,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the autoscaler decide how many workers to run?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 87,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 208,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is scale to zero and what does it cost?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 107,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 41,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why do cache keys include a corpus version marker?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 49,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 38,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How do pre-signed uploads keep the storage bucket private?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 40,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 49,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What does the dead letter queue preserve for operators?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How are expired documents excluded from answers?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 38,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 39,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What observations feed the scaling control loop?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 43,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 48,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How is cosine similarity used to find relevant passages?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 41,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 47,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why over-fetch and rerank instead of relying on top-k alone?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 48,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 41,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What roles does least privilege assign to the document processor?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 44,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 42,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does bounded retry with backoff separate failure classes?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 59,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 45,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why alarm on dead letter queue depth?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 47,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 61,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens when the queue backlog is empty?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 43,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 49,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How do workers self-terminate in the standalone task pool?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 41,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 39,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What happens to artifacts after twenty four hours?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 55,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the summary export work?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 47,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What is stored in the vector index metadata?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 40,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 40,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "How does the API flag cache hits to clients?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 56,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 46,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "Why compare desired against current capacity every tick?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 54,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 43,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    },
+    {
+      "q": "What latency tradeoffs come with cold container starts?",
+      "origin": {
+        "status": 200,
+        "latencyMs": 56,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      },
+      "repeat": {
+        "status": 200,
+        "latencyMs": 45,
+        "tier": "HIT-L1",
+        "serverMs": 0
+      }
+    }
+  ]
+}

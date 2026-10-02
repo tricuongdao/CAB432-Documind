@@ -1,0 +1,59 @@
+{
+ "originTiers": {
+  "MISS": 24,
+  "HIT-L2": 1,
+  "HIT-L1": 25
+ },
+ "repeatTiers": {
+  "HIT-L1": 50
+ },
+ "originServerMs": {
+  "n": 24,
+  "p50": 2408,
+  "p95": 3339,
+  "p99": 3419,
+  "min": 964,
+  "max": 3419
+ },
+ "originClientMs": {
+  "n": 24,
+  "p50": 2529,
+  "p95": 3382,
+  "p99": 3471,
+  "min": 1017,
+  "max": 3471
+ },
+ "repeatServerMs": {
+  "n": 50,
+  "p50": 0,
+  "p95": 0,
+  "p99": 0,
+  "min": 0,
+  "max": 0
+ },
+ "repeatClientMs": {
+  "n": 50,
+  "p50": 46,
+  "p95": 132,
+  "p99": 208,
+  "min": 38,
+  "max": 208
+ },
+ "burst": {
+  "n": 12,
+  "tiers": {
+   "HIT-L1": 10,
+   "HIT-L2": 2
+  },
+  "clientMs": {
+   "n": 12,
+   "p50": 176,
+   "p95": 193,
+   "p99": 323,
+   "min": 45,
+   "max": 323
+  }
+ },
+ "speedupServerP50": null,
+ "speedupServerP50max": 2408.0
+}
