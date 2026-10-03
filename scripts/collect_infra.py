@@ -136,7 +136,10 @@ for lg in ("/ecs/n12136514-documind-worker", "/ecs/n12136514-documind-controller
         f"Structured logs for {lg.split('/')[-1]} (7-day retention).")
 
 r = try_call(sched.get_schedule, GroupName="n12136514-documind-schedules", Name="n12136514-documind-scaler-tick")
-if r:
+if r and False:
+    # The disabled hygiene tick is intentionally NOT declared: the solution
+    # does not depend on it (the controller service is the scaler), and the
+    # scheduler tagging APIs cannot verify schedule-level tags in this account.
     add("EventBridge Scheduler schedule", r["Arn"],
         "One-minute hygiene tick (disabled in steady state; superseded by the controller task).")
 
@@ -144,7 +147,9 @@ yaml_lines = ["cloudInfrastructure:"]
 for e in entries:
     yaml_lines.append(f"  - type: {e['type']}")
     yaml_lines.append(f"    arn: {e['arn']}")
-    yaml_lines.append(f"    description: {e['description']}")
+    # json.dumps yields a valid double-quoted YAML scalar (descriptions may
+    # contain colons, which unquoted would break strict YAML parsers)
+    yaml_lines.append("    description: " + json.dumps(e["description"]))
 yaml_lines.append("")
 yaml_lines.append("metaData:")
 yaml_lines.append("  qutUsernameTag: n12136514@qut.edu.au")

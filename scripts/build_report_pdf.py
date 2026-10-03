@@ -23,26 +23,26 @@ OUT = os.path.join(ROOT, "DocuMind-A3-Report.pdf")
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
 CSS = """
-@page { size: A4; margin: 16mm 15mm 15mm; }
+@page { size: A4; margin: 15mm 15mm 14mm; }
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; }
-body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.4pt; line-height: 1.52; color: #1c2438; margin: 0; }
-h1 { font-size: 23pt; margin: 2px 0 2px; color: #14213d; }
-h2 { font-size: 15.5pt; color: #14213d; border-bottom: 2.2px solid #2f5f9e; padding-bottom: 4px; margin: 24px 0 10px; page-break-after: avoid; }
-h3 { font-size: 12.3pt; color: #2f5f9e; margin: 16px 0 6px; page-break-after: avoid; }
-p { margin: 6px 0 10px; }
-table { border-collapse: collapse; width: 100%; font-size: 9.2pt; margin: 8px 0 14px; page-break-inside: auto; }
-th, td { border: 1px solid #c9d4e8; padding: 4px 7px; text-align: left; vertical-align: top; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.1pt; line-height: 1.46; color: #1c2438; margin: 0; }
+h1 { font-size: 22pt; margin: 2px 0 2px; color: #14213d; }
+h2 { font-size: 15pt; color: #14213d; border-bottom: 2.2px solid #2f5f9e; padding-bottom: 3px; margin: 17px 0 8px; page-break-after: avoid; }
+h3 { font-size: 12pt; color: #2f5f9e; margin: 13px 0 5px; page-break-after: avoid; }
+p { margin: 4px 0 7px; }
+table { border-collapse: collapse; width: 100%; font-size: 8.9pt; margin: 6px 0 11px; page-break-inside: auto; }
+th, td { border: 1px solid #c9d4e8; padding: 3px 6px; text-align: left; vertical-align: top; }
 th { background: #eef2fa; }
 tr { page-break-inside: avoid; }
-code { font-family: Consolas, 'Courier New', monospace; font-size: 8.9pt; background: #f2f5fb; padding: 0 3px; border-radius: 3px; }
-pre { background: #f6f8fc; border: 1px solid #dbe3f0; border-radius: 6px; padding: 8px 10px; font-size: 8.4pt; white-space: pre-wrap; page-break-inside: avoid; }
+code { font-family: Consolas, 'Courier New', monospace; font-size: 8.7pt; background: #f2f5fb; padding: 0 3px; border-radius: 3px; }
+pre { background: #f6f8fc; border: 1px solid #dbe3f0; border-radius: 6px; padding: 7px 9px; font-size: 8.2pt; white-space: pre-wrap; page-break-inside: avoid; }
 pre code { background: none; padding: 0; }
 img { max-width: 100%; }
-p > img { display: block; margin: 10px auto 4px; border: 1px solid #e2e8f4; border-radius: 4px; page-break-inside: avoid; }
-blockquote { border-left: 3px solid #2f5f9e; margin: 8px 0; padding: 2px 12px; color: #33456b; background: #f7f9fd; }
-hr { border: none; border-top: 1px solid #c9d4e8; margin: 18px 0; }
-li { margin: 2px 0; }
+p > img { display: block; margin: 7px auto 3px; border: 1px solid #e2e8f4; border-radius: 4px; page-break-inside: avoid; max-width: 100%; max-height: 250mm; }
+blockquote { border-left: 3px solid #2f5f9e; margin: 6px 0; padding: 2px 12px; color: #33456b; background: #f7f9fd; }
+hr { border: none; border-top: 1px solid #c9d4e8; margin: 14px 0; }
+li { margin: 1px 0; }
 .pb { page-break-before: always; }
 .figcap { font-size: 9.4pt; color: #445; font-style: italic; }
 """

@@ -737,9 +737,6 @@ cloudInfrastructure:
   - type: CloudWatch log group
     arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/aws/lambda/n12136514-documind-api
     description: Structured logs for n12136514-documind-api (7-day retention).
-  - type: EventBridge Scheduler schedule
-    arn: arn:aws:scheduler:ap-southeast-2:901444280953:schedule/n12136514-documind-schedules/n12136514-documind-scaler-tick
-    description: One-minute hygiene tick (disabled in steady state; superseded by the controller task).
 
 metaData:
   qutUsernameTag: n12136514@qut.edu.au
