@@ -161,12 +161,26 @@ def main():
         time.sleep(4)
     check("job completed", status == "COMPLETED", f"final status={status}")
 
-    # 5) RAG query: miss then hit
+    # 5) RAG query: allow for the asynchronous S3 Vectors index build before
+    #    checking citations (freshly written vectors can take a few minutes to
+    #    become searchable), then verify the answer and the cache tiers.
     q = "What caching strategy does the system use?"
-    miss = sess.post(ep + "/api/query", json={"question": q}, timeout=120)
-    check("query origin 200", miss.status_code == 200, f"HTTP {miss.status_code}")
-    mj = miss.json() if miss.status_code == 200 else {}
-    tier1 = miss.headers.get("X-Cache-Tier", mj.get("cache", "?"))
+    miss, mj = None, {}
+    t_q = time.time()
+    for attempt in range(1, 13):
+        miss = sess.post(ep + "/api/query", json={"question": q}, timeout=120)
+        if miss.status_code == 200:
+            mj = miss.json()
+            if mj.get("sources"):
+                break
+        if attempt == 1:
+            print("  waiting for the vector index to expose the fresh document (async build; up to ~9 min)...")
+        if time.time() - t_q > 570:
+            break
+        time.sleep(45)
+    check("query origin 200", miss is not None and miss.status_code == 200,
+          f"HTTP {miss.status_code if miss else 'n/a'}")
+    tier1 = (miss.headers.get("X-Cache-Tier") if miss else None) or mj.get("cache", "?")
     lat1 = mj.get("latencyMs")
     print(f"  first ask: tier={tier1} latencyMs={lat1} sources={len(mj.get('sources', []))}")
     check("query sources", len(mj.get("sources", [])) > 0, f"{len(mj.get('sources', []))} sources")
