@@ -1,0 +1,122 @@
+{
+  "endpoint": "https://rqy6cawtyg.execute-api.ap-southeast-2.amazonaws.com/documind",
+  "jobId": "job-5e8b5d1003",
+  "transitions": [
+    {
+      "t": 0.1,
+      "status": "CREATED"
+    },
+    {
+      "t": 4.2,
+      "status": "EMBEDDING"
+    },
+    {
+      "t": 12.4,
+      "status": "COMPLETED"
+    }
+  ],
+  "firstQuery": {
+    "tier": "MISS",
+    "latencyMs": 202
+  },
+  "secondQuery": {
+    "tier": "MISS",
+    "latencyMs": 187
+  },
+  "cacheStats": {
+    "backend": "memory-l1+dynamodb-l2",
+    "l1": {
+      "capacity": 512,
+      "entries": 4,
+      "hits": 3,
+      "misses": 26,
+      "sets": 25,
+      "evictions": 0,
+      "expired": 21,
+      "hitRate": 0.1034
+    },
+    "l2": {
+      "store": "DynamoDB items (cache#<hash>) in the jobs table",
+      "ttlSeconds": 3600
+    }
+  },
+  "checks": [
+    {
+      "check": "healthz 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "healthz models",
+      "ok": true,
+      "detail": "amazon.titan-embed-text-v2:0 / google.gemma-3-12b-it"
+    },
+    {
+      "check": "upload presign 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "presigned S3 PUT",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "job completed",
+      "ok": true,
+      "detail": "final status=COMPLETED"
+    },
+    {
+      "check": "query origin 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "query sources",
+      "ok": false,
+      "detail": "0 sources"
+    },
+    {
+      "check": "second ask cached",
+      "ok": false,
+      "detail": "tier=MISS"
+    },
+    {
+      "check": "cache speedup",
+      "ok": true,
+      "detail": "202 ms -> 187 ms"
+    },
+    {
+      "check": "cache stats 200",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "mcp initialize",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "mcp tools/list",
+      "ok": true,
+      "detail": "3 tools"
+    },
+    {
+      "check": "mcp search_documents",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "check": "admin cache purge (skipped: no AWS credentials)",
+      "ok": true,
+      "detail": "skipped - optional check"
+    },
+    {
+      "check": "summary markdown",
+      "ok": true,
+      "detail": "HTTP 200, 1319 bytes"
+    }
+  ],
+  "passed": 13,
+  "failed": 2
+}

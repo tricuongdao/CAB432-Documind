@@ -1,0 +1,4 @@
+# Local script dependencies for smoke_test.py / load_test.py (report tooling: pypdf, markdown, pyyaml)
+requests>=2.31
+boto3>=1.39
+reportlab>=4.0
