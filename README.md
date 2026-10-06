@@ -9,7 +9,7 @@ Serverless document intelligence: upload PDFs, ask questions, get cited answers.
 
 Client → (presigned PUT) → S3 → EventBridge → SQS → ECS Fargate workers (0–6, Spot) → Bedrock (Titan embeddings + Gemma answers) → S3 Vectors + DynamoDB. Query API = Lambda (FastAPI) with L1 in-process + L2 DynamoDB cache and an MCP tool endpoint. A controller task reads queue backlog every 60 s and drives the pool: `desired = 0 if backlog = 0 else clamp(ceil(backlog/2), 1, 6)`.
 
-Full reasoning: **`DocuMind-A3-Report.pdf`** (source: `REPORT.md`).
+Full reasoning: **`DocuMind-A3-Report.pdf`** (source: `REPORT.md`). Operations & handoff: **`docs/HANDOFF.md`** (state, playbook, sandbox constraints, open items).
 
 ## Repository layout
 
