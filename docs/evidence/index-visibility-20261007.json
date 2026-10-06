@@ -1,0 +1,22 @@
+{
+  "probe": "fresh-vector searchability (index visibility)",
+  "date": "2026-10-07",
+  "endpoint": "https://rqy6cawtyg.execute-api.ap-southeast-2.amazonaws.com/documind",
+  "jobId": "job-a18d543f20",
+  "method": "upload a marker PDF via the API (distinctive content); poll POST /api/query for the marker question until the new document's own chunks appear in the sources list",
+  "rawOutput": [
+    "uploaded job-a18d543f20 PUT 200",
+    "job COMPLETED at t+77s",
+    "  t+    80s  sources=3  mine=3  tier=MISS",
+    "VISIBLE after 80s from upload (3s after COMPLETED)"
+  ],
+  "result": {
+    "completedAfterSeconds": 77,
+    "visibleAfterUploadSeconds": 80,
+    "visibleAfterCompletionSeconds": 3,
+    "sourcesReturned": 3,
+    "sourcesFromProbeDocument": 3,
+    "tier": "MISS"
+  },
+  "notes": "Fresh vectors are searchable within seconds of job completion. Earlier observations of fresh documents not surfacing were caused by ranking dilution: vectors of TTL-expired jobs remain in the index and are filtered only AFTER top-K ranking, so a small new document can be out-ranked for generic questions until asked something document-specific."
+}

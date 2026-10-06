@@ -14,7 +14,7 @@ Live app: **https://rqy6cawtyg.execute-api.ap-southeast-2.amazonaws.com/documind
 4. **Ask the exact same question again.** This time: green badge `⚡ Cache hit (L1 memory) · 0 ms`. That's the two-tier cache the report is all about.
 5. Scroll down: **Cache statistics** (hits/misses), and in the pipeline list, a **failed** password-protected/corrupt PDF (poison documents are isolated in the dead-letter queue — deliberate test casualties from the fault-isolation run).
 6. Click **"View AI summary"** on any completed document — the worker's markdown digest.
-7. **Fresh-upload timing:** S3 Vectors builds its index asynchronously — a document that just turned `Ready` becomes *searchable* a few minutes later. Upload your demo documents first, walk through the pipeline while you wait, and they'll be queryable by the time you reach the chat.
+7. **Fresh-upload timing:** measured — a document becomes searchable ≈**3 s after it turns `Ready`**. One caveat: if a *generic* question doesn't cite a just-uploaded document, ask something specific to that document — vectors from expired documents can briefly out-rank it.
 
 ## 1) One-time setup (for the test scripts)
 
@@ -76,7 +76,7 @@ Other console spots: SQS queues (`n12136514-documind-queue`, `…-dlq`), ECS clu
 | `The SSO session … has expired` | `aws sso login` (only needed for load tests / AWS console work) |
 | Smoke test picks the "wrong" URL | pass `DOCUMIND_ENDPOINT="…/documind"` explicitly (as above) — it defaults to the Lambda Function URL |
 | First query after idle feels slow | that's a Lambda cold start + the very first worker boot; repeats are instant (cache) |
-| A just-uploaded document returns "No matching documents" | S3 Vectors index build is asynchronous — give it a couple of minutes; older documents keep answering meanwhile |
+| A just-uploaded document isn't cited for a generic question | its chunks were out-ranked by vectors from expired documents; ask something specific to the new document (fresh vectors are searchable within seconds) |
 
 Uploads expire automatically 24 h after submission — there is nothing to clean up.
 

@@ -2,7 +2,7 @@
 
 **Student:** Tri Cuong Dao — n12136514@qut.edu.au · **Account:** 901444280953 · **Region:** ap-southeast-2 (Sydney)
 **Repo:** `C:/Projects/CAB432-DocuMind` (git `master`)
-**Last updated:** 7 October 2026 (~08:30 AEST) · **Status:** deployed and verified working; final automated re-verification runs in flight (relaunched 7 Oct after a local Python-package reset); two user actions + one tag decision outstanding (Section 8).
+**Last updated:** 7 October 2026 (~08:30 AEST) · **Status:** deployed and verified working; fresh-vector visibility measured (3 s); smoke re-run in flight; two user actions + one tag decision outstanding (Section 8).
 
 The one-paragraph version: DocuMind AI is a serverless document-intelligence system built for QUT CAB432 (Cloud Computing) Assessment 3. Users upload PDFs; an event-driven pipeline extracts, chunks, embeds (Bedrock Titan v2) and summarises (Gemma 3 12B) them into an Amazon S3 Vectors index via SQS-driven ECS Fargate workers (metric-based autoscaling, scale-to-zero, custom controller because managed scaling APIs are denied in this account); a Lambda + FastAPI service answers cited RAG questions through a two-tier cache (in-process L1 + DynamoDB L2) and also serves an MCP tool endpoint for agents. It runs live behind the shared course API gateway under `/documind/*`. Every deliverable — report, submission YAML, evidence bundle, video script, cost model, runbook — is in this repo. Every resource carries `purpose=assessment 3` and `qut-username=n12136514@qut.edu.au`.
 
@@ -99,10 +99,10 @@ Before taking screenshots/recording: `node scripts/capture_narrow.mjs` etc. (Edg
 | Cache — 50 queries | origin server p50 2 408 ms (n=24) vs cached 0 ms L1 (n=62); 62/62 repeats hit | `cache-bench-20261002-144249.json`, `cache-summary.json` |
 | Fault isolation | password-protected / corrupt / blank → FAILED + DLQ depth 3, zero worker crashes | `dlq-20261002-145114.json` |
 | Worker unit tests | 8/8 green | `backend/worker/test_local.py` |
-| Vector index health (today) | 183 vectors; fresh uploads present; direct + API queries return cited hits | live probes 2026-10-04 |
+| Vector index health | Fresh-chunk visibility directly measured: **3 s** from job completion to searchable; queries return cited hits (direct + via API) | `docs/evidence/index-visibility-20261007.json`; probes 4 + 7 Oct |
 
 **Known behaviours (not bugs — document them, don't "fix" them):**
-1. **S3 Vectors index build is asynchronous.** Freshly written vectors appear in `list_vectors` immediately but only become *searchable* after a short settling period (observed: minutes). The smoke test now waits this out; the runbook tells demo operators to upload early. A probe to quantify the exact lag is in flight.
+1. **Fresh vectors are searchable within seconds** (directly measured 7 Oct: visible **3 s after job completion**, probe `job-a18d543f20`, evidence `docs/evidence/index-visibility-20261007.json`). Earlier "no matching documents" windows came from a different effect: vectors of **TTL-expired jobs remain in the index** and are filtered only *after* top-K ranking — a small new document can be out-ranked for *generic* questions. Document-specific questions surface fresh content immediately; the smoke test keeps a wait-loop as a safety margin.
 2. **24 h TTL expiry.** Job rows expire daily (by design); their vectors are then filtered by the stale-vector guard, so an old demo corpus legitimately "goes quiet". Re-seed fresh PDFs before demos/recording.
 3. **Worker pool sits at 0 when idle** — that's the scale-to-zero target state, not an outage.
 
@@ -139,7 +139,7 @@ Before taking screenshots/recording: `node scripts/capture_narrow.mjs` etc. (Edg
    `aws apigatewayv2 tag-resource --resource-arn "arn:aws:apigateway:ap-southeast-2::/apis/rqy6cawtyg" --tags purpose="assessment 3"`
 
 **Housekeeping (can be done any time):**
-4. Quantify + fold the S3 Vectors settling lag into RUNBOOK §6 and the report's failure-modes table (probe in flight).
+4. ~~Quantify the S3 Vectors visibility lag~~ **Done (7 Oct):** measured **3 s** from job completion to searchable; RUNBOOK + Section 5 updated; no report change required (the report's mid-processing wording remains accurate).
 5. Optional: split the two architecture + two sequence diagrams into focused, larger-type diagrams (the only remaining legibility gap vs the ~12 pt guidance).
 
 ## 9. Cost snapshot (50 concurrent users, average demand)
