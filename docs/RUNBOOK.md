@@ -67,6 +67,7 @@ Other console spots: SQS queues (`n12136514-documind-queue`, `…-dlq`), ECS clu
 - `docs/evidence/` — every JSON/CSV the experiments produced (trend timeline CSV, cache percentiles, DLQ reasons, smoke runs).
 - Rebuild the report charts: `python scripts/make_figures.py` (SVG → PNG via `scripts/render_svgs.sh`).
 - Rebuild the report PDF: `python scripts/build_report_pdf.py` → `DocuMind-A3-Report.pdf`.
+- **Corpus hygiene:** `python scripts/purge_stale_vectors.py` — deletes vectors whose job rows have expired (keeps ranking clean so fresh documents always surface; safe to run any time, especially before a demo).
 
 ## 4) Common nits
 
@@ -76,7 +77,7 @@ Other console spots: SQS queues (`n12136514-documind-queue`, `…-dlq`), ECS clu
 | `The SSO session … has expired` | `aws sso login` (only needed for load tests / AWS console work) |
 | Smoke test picks the "wrong" URL | pass `DOCUMIND_ENDPOINT="…/documind"` explicitly (as above) — it defaults to the Lambda Function URL |
 | First query after idle feels slow | that's a Lambda cold start + the very first worker boot; repeats are instant (cache) |
-| A just-uploaded document isn't cited for a generic question | its chunks were out-ranked by vectors from expired documents; ask something specific to the new document (fresh vectors are searchable within seconds) |
+| A just-uploaded document isn't cited for a generic question | its chunks were out-ranked by vectors from expired documents — run `scripts/purge_stale_vectors.py`, or ask something specific to the new document (fresh vectors are searchable within seconds) |
 
 Uploads expire automatically 24 h after submission — there is nothing to clean up.
 

@@ -34,10 +34,12 @@ def check(name, ok, detail=""):
 
 
 def discover_endpoint():
-    # Preference order: env override -> API Gateway (boto3) -> hardcoded live URLs.
+    # Preference order: env override -> shared gateway (boto3) -> Function URL -> hardcoded.
     try:
         apigw = boto3.client("apigatewayv2", region_name=REGION)
         for a in apigw.get_apis().get("Items", []):
+            if a.get("ApiId") == "rqy6cawtyg":
+                return a["ApiEndpoint"].rstrip("/") + "/documind"
             if a.get("Name") == "n12136514-documind-api":
                 return a["ApiEndpoint"]
     except Exception:

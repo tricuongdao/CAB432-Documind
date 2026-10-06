@@ -86,6 +86,10 @@ python scripts/fill_report.py                     # (already applied; token fill
 python scripts/make_figures.py                    # chart SVGs -> .build/charts
 bash scripts/render_svgs.sh                       # SVG -> PNG (Edge headless, 2x)
 python scripts/build_report_pdf.py                # REPORT.md -> DocuMind-A3-Report.pdf
+
+# Corpus hygiene (removes vectors whose job rows expired, so fresh documents
+# rank cleanly for generic questions; safe + idempotent):
+python scripts/purge_stale_vectors.py            # run before demos
 ```
 
 Before taking screenshots/recording: `node scripts/capture_narrow.mjs` etc. (Edge via debug port; see script headers).
@@ -102,7 +106,7 @@ Before taking screenshots/recording: `node scripts/capture_narrow.mjs` etc. (Edg
 | Vector index health | Fresh-chunk visibility directly measured: **3 s** from job completion to searchable; queries return cited hits (direct + via API) | `docs/evidence/index-visibility-20261007.json`; probes 4 + 7 Oct |
 
 **Known behaviours (not bugs — document them, don't "fix" them):**
-1. **Fresh vectors are searchable within seconds** (directly measured 7 Oct: visible **3 s after job completion**, probe `job-a18d543f20`, evidence `docs/evidence/index-visibility-20261007.json`). Earlier "no matching documents" windows came from a different effect: vectors of **TTL-expired jobs remain in the index** and are filtered only *after* top-K ranking — a small new document can be out-ranked for *generic* questions. Document-specific questions surface fresh content immediately; the smoke test keeps a wait-loop as a safety margin.
+1. **Fresh vectors are searchable within seconds** (directly measured 7 Oct: visible **3 s after job completion**, probe `job-a18d543f20`, evidence `docs/evidence/index-visibility-20261007.json`). Earlier "no matching documents" windows came from a different effect: vectors of **TTL-expired jobs remain in the index** and are filtered only *after* top-K ranking — a small new document can be out-ranked for *generic* questions. Document-specific questions surface fresh content immediately; the smoke test keeps a wait-loop as a safety margin. **Sweep dead vectors with `scripts/purge_stale_vectors.py` before demos** (first sweep 7 Oct: 185 stale vectors removed — only live content remained).
 2. **24 h TTL expiry.** Job rows expire daily (by design); their vectors are then filtered by the stale-vector guard, so an old demo corpus legitimately "goes quiet". Re-seed fresh PDFs before demos/recording.
 3. **Worker pool sits at 0 when idle** — that's the scale-to-zero target state, not an outage.
 
