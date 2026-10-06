@@ -2,7 +2,7 @@
 
 **Student:** Tri Cuong Dao — n12136514@qut.edu.au · **Account:** 901444280953 · **Region:** ap-southeast-2 (Sydney)
 **Repo:** `C:/Projects/CAB432-DocuMind` (git `master`)
-**Last updated:** 7 October 2026 (~08:30 AEST) · **Status:** deployed and verified working; fresh-vector visibility measured (3 s); smoke re-run in flight; two user actions + one tag decision outstanding (Section 8).
+**Last updated:** 7 October 2026 (~08:40 AEST) · **Status:** deployed and fully verified — smoke **14/14** on 7 Oct (after stale-vector purge); fresh-vector visibility measured (3 s); two user actions + one tag decision outstanding (Section 8).
 
 The one-paragraph version: DocuMind AI is a serverless document-intelligence system built for QUT CAB432 (Cloud Computing) Assessment 3. Users upload PDFs; an event-driven pipeline extracts, chunks, embeds (Bedrock Titan v2) and summarises (Gemma 3 12B) them into an Amazon S3 Vectors index via SQS-driven ECS Fargate workers (metric-based autoscaling, scale-to-zero, custom controller because managed scaling APIs are denied in this account); a Lambda + FastAPI service answers cited RAG questions through a two-tier cache (in-process L1 + DynamoDB L2) and also serves an MCP tool endpoint for agents. It runs live behind the shared course API gateway under `/documind/*`. Every deliverable — report, submission YAML, evidence bundle, video script, cost model, runbook — is in this repo. Every resource carries `purpose=assessment 3` and `qut-username=n12136514@qut.edu.au`.
 
@@ -98,7 +98,7 @@ Before taking screenshots/recording: `node scripts/capture_narrow.mjs` etc. (Edg
 
 | Check | Result | Evidence |
 |---|---|---|
-| Full smoke (14 checks) | 14/14 (historical; fresh run in flight at handoff) | `docs/evidence/smoke-20261002-150117.json`, `…-143617.json`; today: manual probe with cited answer, 4 sources, 2.1 s |
+| Full smoke (14 checks) | **14/14** re-verified 7 Oct after the stale-vector purge (job 46 s; origin MISS 2 175 ms / 4 sources → HIT-L1 0 ms) | `docs/evidence/smoke-20261006-223730.json` (+ 2 Oct runs) |
 | Pipeline burst — 30 docs | upload 6.5 s · backlog peak 28 · pool 1→6 in ~25 s · drain 58.2 s · 30/30 COMPLETED · pool → 0 | `docs/evidence/pipeline-20261002-143846.json` + `-timeline.csv` |
 | Cache — 50 queries | origin server p50 2 408 ms (n=24) vs cached 0 ms L1 (n=62); 62/62 repeats hit | `cache-bench-20261002-144249.json`, `cache-summary.json` |
 | Fault isolation | password-protected / corrupt / blank → FAILED + DLQ depth 3, zero worker crashes | `dlq-20261002-145114.json` |
