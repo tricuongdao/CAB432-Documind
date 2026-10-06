@@ -1,8 +1,8 @@
 # HANDOFF — DocuMind AI · CAB432 Assessment 3
 
 **Student:** Tri Cuong Dao — n12136514@qut.edu.au · **Account:** 901444280953 · **Region:** ap-southeast-2 (Sydney)
-**Repo:** `C:/Projects/CAB432-DocuMind` (git `master`, latest commit `db9e846`)
-**Last updated:** 4 October 2026 (~16:30 AEST) · **Status:** deployed and verified working; final automated re-verification runs in flight; two user actions + one tag decision outstanding (Section 8).
+**Repo:** `C:/Projects/CAB432-DocuMind` (git `master`)
+**Last updated:** 7 October 2026 (~08:30 AEST) · **Status:** deployed and verified working; final automated re-verification runs in flight (relaunched 7 Oct after a local Python-package reset); two user actions + one tag decision outstanding (Section 8).
 
 The one-paragraph version: DocuMind AI is a serverless document-intelligence system built for QUT CAB432 (Cloud Computing) Assessment 3. Users upload PDFs; an event-driven pipeline extracts, chunks, embeds (Bedrock Titan v2) and summarises (Gemma 3 12B) them into an Amazon S3 Vectors index via SQS-driven ECS Fargate workers (metric-based autoscaling, scale-to-zero, custom controller because managed scaling APIs are denied in this account); a Lambda + FastAPI service answers cited RAG questions through a two-tier cache (in-process L1 + DynamoDB L2) and also serves an MCP tool endpoint for agents. It runs live behind the shared course API gateway under `/documind/*`. Every deliverable — report, submission YAML, evidence bundle, video script, cost model, runbook — is in this repo. Every resource carries `purpose=assessment 3` and `qut-username=n12136514@qut.edu.au`.
 
