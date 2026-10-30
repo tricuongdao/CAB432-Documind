@@ -29,6 +29,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 from config import (
     AWS_REGION,
@@ -193,6 +194,15 @@ def process_message(msg: dict) -> bool:
         if size > MAX_PDF_BYTES:
             raise PoisonError(f"upload too large ({size} bytes > {MAX_PDF_BYTES})")
 
+        # The notification may outlive the object: deleting a document removes
+        # the upload but cannot recall an S3 event already on the queue. If the
+        # object is gone there is nothing to process, so discard the message
+        # instead of creating a phantom job that can only end as FAILED.
+        if not store.object_exists(key):
+            log.warning("upload no longer present, discarding stale notification: %s", key)
+            store.emit_metric("StaleUploadDiscarded", 1)
+            return True
+
         store.ensure_job(job_id, bucket, key, size)
         t0 = time.time()
         store.update_job(job_id, status="PROCESSING", receiveCount=receive_count,
@@ -202,7 +212,16 @@ def process_message(msg: dict) -> bool:
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
         tmp.close()
         try:
-            store.download_to(key, tmp.name)
+            try:
+                store.download_to(key, tmp.name)
+            except ClientError as exc:
+                # Deleted between the existence check and the download.
+                code = str(exc.response.get("Error", {}).get("Code", ""))
+                if code in ("404", "NoSuchKey", "NotFound"):
+                    log.warning("upload vanished mid-flight, discarding: %s", key)
+                    store.emit_metric("StaleUploadDiscarded", 1)
+                    return True
+                raise
             extracted = extract.extract_text(tmp.name)
         finally:
             try:

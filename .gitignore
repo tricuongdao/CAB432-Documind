@@ -13,3 +13,12 @@ dist/
 # OS noise
 Thumbs.db
 .DS_Store
+
+# large media: publish via YouTube or Loom instead of git history
+Submission/*.mp4
+
+# Office owner-lock files
+docs/~$*
+
+# stale duplicate of backend/ (kept out of history)
+/src/

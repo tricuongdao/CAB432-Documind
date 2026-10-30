@@ -10,6 +10,7 @@ import time
 
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 from config import (
     AWS_REGION,
@@ -119,6 +120,25 @@ def put_chunks(job_id: str, filename: str, chunks: list, embeddings: list, model
 
 def download_to(key: str, path: str):
     _s3.download_file(BUCKET, key, path)
+
+
+def object_exists(key: str) -> bool:
+    """True when the object is still in the bucket.
+
+    S3 notifications are asynchronous and at-least-once, so a message can
+    arrive for an upload that has since been deleted (the delete endpoint
+    removes the object, but cannot recall a notification already on the
+    queue). Checking before touching the job record keeps a deleted document
+    from being resurrected as a phantom job.
+    """
+    try:
+        _s3.head_object(Bucket=BUCKET, Key=key)
+        return True
+    except ClientError as exc:
+        code = str(exc.response.get("Error", {}).get("Code", ""))
+        if code in ("404", "NoSuchKey", "NotFound"):
+            return False
+        raise
 
 
 def put_text(key: str, body: str, content_type: str = "text/plain; charset=utf-8") -> str:

@@ -1,0 +1,82 @@
+cloudInfrastructure:
+  - type: Bedrock model
+    arn: arn:aws:bedrock:ap-southeast-2::foundation-model/amazon.titan-embed-text-v2:0
+    description: Embedding model (1024-dim) used by workers for corpus chunks and by the API for questions.
+  - type: Bedrock model
+    arn: arn:aws:bedrock:ap-southeast-2::foundation-model/google.gemma-3-12b-it
+    description: Generation model used for document summaries and cited RAG answer synthesis.
+  - type: ECS cluster
+    arn: arn:aws:ecs:ap-southeast-2:901444280953:cluster/n12136514-documind-cluster
+    description: Fargate cluster hosting the ingestion worker service and the autoscaling controller task.
+  - type: ECS service
+    arn: arn:aws:ecs:ap-southeast-2:901444280953:service/n12136514-documind-cluster/n12136514-documind-worker-svc
+    description: Elastic worker pool (0-6 Fargate Spot tasks) that pulls documents from SQS and processes them.
+  - type: ECS service
+    arn: arn:aws:ecs:ap-southeast-2:901444280953:service/n12136514-documind-cluster/n12136514-documind-controller-svc
+    description: Long-lived controller task implementing metric-based autoscaling from queue backlog.
+  - type: ECS task definition
+    arn: arn:aws:ecs:ap-southeast-2:901444280953:task-definition/n12136514-documind-worker:2
+    description: Task definition for the worker container (image, roles, environment).
+  - type: ECS task definition
+    arn: arn:aws:ecs:ap-southeast-2:901444280953:task-definition/n12136514-documind-controller:1
+    description: Task definition for the controller container (image, roles, environment).
+  - type: SQS queue
+    arn: arn:aws:sqs:ap-southeast-2:901444280953:n12136514-documind-queue
+    description: "Durable work queue: upload events wait here; workers long-poll it; redrive after 3 receives."
+  - type: SQS queue
+    arn: arn:aws:sqs:ap-southeast-2:901444280953:n12136514-documind-dlq
+    description: "Dead-letter queue isolating poison documents (corrupt/password-protected) without worker crashes."
+  - type: EventBridge rule
+    arn: arn:aws:events:ap-southeast-2:901444280953:rule/n12136514-documind-upload-rule
+    description: "Routes S3 ObjectCreated events (uploads/ prefix) from the storage bucket to the work queue."
+  - type: S3 bucket
+    arn: arn:aws:s3:::n12136514-documind-storage
+    description: "Unstructured store: raw PDF uploads, extracted chunk JSON, summary markdown; 24h lifecycle expiry."
+  - type: S3 bucket
+    arn: arn:aws:s3:::n12136514-documind-web
+    description: "Static front-end assets (immutable hashed bundles) served by the API for same-origin delivery."
+  - type: Vector store
+    arn: arn:aws:s3vectors:ap-southeast-2:901444280953:bucket/n12136514-documind-vectors
+    description: "Serverless vector index (documind-chunks, 1024-dim cosine) storing chunk embeddings + citation text."
+  - type: DynamoDB table
+    arn: arn:aws:dynamodb:ap-southeast-2:901444280953:table/n12136514-documind-jobs
+    description: "Single-table store for job states and cached answers; TTL auto-expires all rows after 24h."
+  - type: Lambda function
+    arn: arn:aws:lambda:ap-southeast-2:901444280953:function:n12136514-documind-api
+    description: "Query API (FastAPI): presigned uploads, job status, cited RAG queries with two-tier cache, MCP tools, static hosting."
+  - type: MCP server
+    arn: https://rqy6cawtyg.execute-api.ap-southeast-2.amazonaws.com/documind/mcp
+    description: "Model Context Protocol endpoint (JSON-RPC) exposing search_documents, ask_documind and list_documents tools."
+  - type: API Gateway
+    arn: arn:aws:apigateway:ap-southeast-2::/apis/rqy6cawtyg
+    description: "Shared course HTTP API; DocuMind mounts additive routes ANY /documind and ANY /documind/{proxy+}."
+  - type: Secrets Manager secret
+    arn: arn:aws:secretsmanager:ap-southeast-2:901444280953:secret:n12136514-documind-secrets-kt2Jho
+    description: "Holds the admin API key protecting cache-purge and other mutating operations."
+  - type: ECR repository
+    arn: arn:aws:ecr:ap-southeast-2:901444280953:repository/n12136514-documind-worker
+    description: "Container image registry for the worker/controller image (linux/amd64)."
+  - type: CloudWatch dashboard
+    arn: arn:aws:cloudwatch::901444280953:dashboard/n12136514-documind-dashboard
+    description: "Operational dashboard: queue backlog, task counts, CPU/memory, cache mix, latency, DLQ depth."
+  - type: CloudWatch alarm
+    arn: arn:aws:cloudwatch:ap-southeast-2:901444280953:alarm:n12136514-documind-dlq-alarm
+    description: "Alerts when any poison document reaches the dead-letter queue."
+  - type: CloudWatch alarm
+    arn: arn:aws:cloudwatch:ap-southeast-2:901444280953:alarm:n12136514-documind-backlog-alarm
+    description: "Alerts on sustained queue backlog above 25 messages."
+  - type: CloudWatch alarm
+    arn: arn:aws:cloudwatch:ap-southeast-2:901444280953:alarm:n12136514-documind-api-errors-alarm
+    description: "Alerts when API errors spike above 5 in 5 minutes."
+  - type: CloudWatch log group
+    arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/ecs/n12136514-documind-worker
+    description: "Structured logs for n12136514-documind-worker (retention unset: logs:PutRetentionPolicy not permitted for this role)."
+  - type: CloudWatch log group
+    arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/ecs/n12136514-documind-controller
+    description: "Structured logs for n12136514-documind-controller (retention unset: logs:PutRetentionPolicy not permitted for this role)."
+  - type: CloudWatch log group
+    arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/aws/lambda/n12136514-documind-api
+    description: "Structured logs for n12136514-documind-api (retention unset: logs:PutRetentionPolicy not permitted for this role)."
+
+metaData:
+  qutUsernameTag: n12136514@qut.edu.au

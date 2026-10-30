@@ -75,6 +75,33 @@ def _live_jobs(job_ids: list) -> set:
     return {i["jobId"] for i in items if i.get("status") == "COMPLETED"}
 
 
+def delete_job_vectors(job_id: str) -> int:
+    """Delete every vector belonging to a job. Returns the count removed.
+
+    Enumerates the index rather than deriving keys from the job's chunkCount,
+    so vectors left behind by a partially processed job are removed too. The
+    index holds one entry per chunk, so a full pass is cheap at this scale.
+    """
+    keys, token = [], None
+    while True:
+        kw = dict(vectorBucketName=VECTOR_BUCKET, indexName=VECTOR_INDEX,
+                  maxResults=500, returnData=False, returnMetadata=True)
+        if token:
+            kw["nextToken"] = token
+        r = _s3v.list_vectors(**kw)
+        for v in r.get("vectors", []):
+            if (v.get("metadata") or {}).get("jobId") == job_id:
+                keys.append(v["key"])
+        token = r.get("nextToken")
+        if not token:
+            break
+
+    for i in range(0, len(keys), 100):
+        _s3v.delete_vectors(vectorBucketName=VECTOR_BUCKET, indexName=VECTOR_INDEX,
+                            keys=keys[i:i + 100])
+    return len(keys)
+
+
 def retrieve(question: str, top_k: int):
     """Embed + vector search. Returns (chunks, embed_ms, retrieve_ms)."""
     t0 = time.time()

@@ -70,13 +70,13 @@ cloudInfrastructure:
     description: "Alerts when API errors spike above 5 in 5 minutes."
   - type: CloudWatch log group
     arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/ecs/n12136514-documind-worker
-    description: "Structured logs for n12136514-documind-worker (7-day retention)."
+    description: "Structured logs for n12136514-documind-worker (retention unset: logs:PutRetentionPolicy not permitted for this role)."
   - type: CloudWatch log group
     arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/ecs/n12136514-documind-controller
-    description: "Structured logs for n12136514-documind-controller (7-day retention)."
+    description: "Structured logs for n12136514-documind-controller (retention unset: logs:PutRetentionPolicy not permitted for this role)."
   - type: CloudWatch log group
     arn: arn:aws:logs:ap-southeast-2:901444280953:log-group:/aws/lambda/n12136514-documind-api
-    description: "Structured logs for n12136514-documind-api (7-day retention)."
+    description: "Structured logs for n12136514-documind-api (retention unset: logs:PutRetentionPolicy not permitted for this role)."
 
 metaData:
   qutUsernameTag: n12136514@qut.edu.au

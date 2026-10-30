@@ -7,6 +7,7 @@ the brief, but we track the total anyway).
 """
 
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -26,25 +27,25 @@ CSS = """
 @page { size: A4; margin: 15mm 15mm 14mm; }
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; }
-body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.1pt; line-height: 1.46; color: #1c2438; margin: 0; }
-h1 { font-size: 22pt; margin: 2px 0 2px; color: #14213d; }
-h2 { font-size: 15pt; color: #14213d; border-bottom: 2.2px solid #2f5f9e; padding-bottom: 3px; margin: 17px 0 8px; page-break-after: avoid; }
-h3 { font-size: 12pt; color: #2f5f9e; margin: 13px 0 5px; page-break-after: avoid; }
-p { margin: 4px 0 7px; }
-table { border-collapse: collapse; width: 100%; font-size: 8.9pt; margin: 6px 0 11px; page-break-inside: auto; }
-th, td { border: 1px solid #c9d4e8; padding: 3px 6px; text-align: left; vertical-align: top; }
-th { background: #eef2fa; }
+body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.38; color: #000; margin: 0; }
+h1 { font-size: 20pt; margin: 2px 0 3px; color: #000; }
+h2 { font-size: 14pt; color: #000; border-bottom: 1px solid #000; padding-bottom: 3px; margin: 17px 0 8px; page-break-after: avoid; }
+h3 { font-size: 12pt; color: #000; margin: 13px 0 5px; page-break-after: avoid; }
+p { margin: 3px 0 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 9.1pt; margin: 6px 0 11px; page-break-inside: auto; }
+th, td { border: 1px solid #000; padding: 2px 5px; text-align: left; vertical-align: top; }
+th { background: none; font-weight: bold; }
 tr { page-break-inside: avoid; }
-code { font-family: Consolas, 'Courier New', monospace; font-size: 8.7pt; background: #f2f5fb; padding: 0 3px; border-radius: 3px; }
-pre { background: #f6f8fc; border: 1px solid #dbe3f0; border-radius: 6px; padding: 7px 9px; font-size: 8.2pt; white-space: pre-wrap; page-break-inside: avoid; }
+code { font-family: Arial, Helvetica, sans-serif; font-size: 9.6pt; background: none; padding: 0; }
+pre { font-family: Arial, Helvetica, sans-serif; background: none; border: 1px solid #000; padding: 7px 9px; font-size: 9.2pt; white-space: pre-wrap; page-break-inside: avoid; }
 pre code { background: none; padding: 0; }
 img { max-width: 100%; }
-p > img { display: block; margin: 7px auto 3px; border: 1px solid #e2e8f4; border-radius: 4px; page-break-inside: avoid; max-width: 100%; max-height: 250mm; }
-blockquote { border-left: 3px solid #2f5f9e; margin: 6px 0; padding: 2px 12px; color: #33456b; background: #f7f9fd; }
-hr { border: none; border-top: 1px solid #c9d4e8; margin: 14px 0; }
+p > img { display: block; margin: 6px auto 3px; border: 1px solid #000; page-break-inside: avoid; max-width: 92%; max-height: 168mm; }
+blockquote { border-left: 2px solid #000; margin: 6px 0; padding: 2px 12px; color: #000; background: none; font-style: normal; }
+hr { border: none; border-top: 1px solid #000; margin: 14px 0; }
 li { margin: 1px 0; }
 .pb { page-break-before: always; }
-.figcap { font-size: 9.4pt; color: #445; font-style: italic; }
+.figcap { font-size: 10pt; color: #000; font-style: italic; }
 """
 
 
@@ -56,8 +57,19 @@ def main() -> int:
         extensions=["tables", "fenced_code", "sane_lists", "attr_list", "md_in_html"],
     )
 
-    # absolute figure paths so Edge (file://) can load them
-    body = body.replace('src="figures/', 'src="file:///C:/Projects/CAB432-DocuMind/docs/figures/')
+    # absolute figure paths so Edge (file://) can load them. Built from ROOT so
+    # the script works from any checkout location, not just the author's.
+    figures_uri = pathlib.Path(ROOT, "docs", "figures").as_uri() + "/"
+    body = body.replace('src="figures/', f'src="{figures_uri}')
+
+    # markdown drops image alt text, so every figure lost its caption. Promote the
+    # alt text to a real caption paragraph beneath the image.
+    body = re.sub(
+        r'<p><img alt="([^"]*)" ([^>]*?) /></p>',
+        lambda m: f'<p><img alt="{m.group(1)}" {m.group(2)} /></p>'
+                  f'<p class="figcap">{m.group(1)}</p>',
+        body,
+    )
 
     # keep the title block on its own page
     body = body.replace("<h2>Executive Summary</h2>", '<h2 class="pb">Executive Summary</h2>', 1)

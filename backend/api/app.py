@@ -4,6 +4,7 @@ Endpoints
     POST /api/upload            presigned S3 upload + job registration
     GET  /api/jobs              recent jobs (cached)
     GET  /api/jobs/{jobId}      live processing status (cached 3s)
+    DELETE /api/jobs/{jobId}    delete a document and everything derived from it
     POST /api/query             cited RAG answer (two-tier result cache)
     GET  /api/cache/stats       cache hit/miss statistics
     GET  /api/summaries/{id}    generated markdown summary download
@@ -198,6 +199,63 @@ def api_jobs(limit: int = 25):
             it["summaryUrl"] = f"/api/summaries/{it['jobId']}"
     l1.set(f"jobs:list:{limit}", items, LIST_CACHE_TTL)
     return JSONResponse(items, headers={"X-Cache": "MISS", "X-Cache-Tier": "L1"})
+
+
+@app.delete("/api/jobs/{job_id}")
+def api_delete_job(job_id: str):
+    """Delete a document and everything derived from it.
+
+    Removes the chunk embeddings, every S3 artifact (raw upload, extracted
+    text, chunk JSON, summary), the job row, and the answer cache. The cache is
+    dropped because a cached answer may cite a passage that no longer exists
+    and the cache key hashes the question, not the corpus — there is no way to
+    find only the answers that cited this document.
+
+    Each step is attempted independently and failures are reported per step
+    rather than aborting: partially removing a document is worse than reporting
+    exactly what was left behind.
+    """
+    if not job_id.startswith("job-"):
+        return JSONResponse({"error": "invalid job id"}, status_code=400)
+    item = store.get_job(job_id)
+    if not item:
+        return JSONResponse({"error": "job not found"}, status_code=404)
+
+    errors = {}
+    try:
+        vectors = rag.delete_job_vectors(job_id)
+    except Exception as e:  # noqa: BLE001
+        vectors, errors["vectors"] = 0, f"{type(e).__name__}: {str(e)[:200]}"
+    try:
+        objects = store.delete_job_objects(job_id, item.get("s3Key", ""))
+    except Exception as e:  # noqa: BLE001
+        objects, errors["objects"] = 0, f"{type(e).__name__}: {str(e)[:200]}"
+    try:
+        row_deleted = store.delete_job(job_id)
+    except Exception as e:  # noqa: BLE001
+        row_deleted, errors["jobRow"] = False, f"{type(e).__name__}: {str(e)[:200]}"
+
+    l1 = cache_mod.get_l1()
+    purged_l1 = l1.purge("")
+    try:
+        purged_l2 = store.purge_all_cache_items()
+    except Exception as e:  # noqa: BLE001
+        purged_l2, errors["cacheL2"] = 0, f"{type(e).__name__}: {str(e)[:200]}"
+
+    if row_deleted:
+        emit_metric("DocumentsDeleted", 1)
+    body = {
+        "deleted": job_id,
+        "filename": item.get("filename", ""),
+        "vectorsDeleted": vectors,
+        "objectsDeleted": objects,
+        "jobRowDeleted": row_deleted,
+        "cacheL1Purged": purged_l1,
+        "cacheL2Purged": purged_l2,
+    }
+    if errors:
+        body["errors"] = errors
+    return JSONResponse(body, status_code=200 if row_deleted else 500)
 
 
 @app.get("/api/jobs/{job_id}")

@@ -1,63 +1,171 @@
-# DocuMind AI — CAB432 Assignment 3 (n12136514)
+# DocuMind AI
 
-Serverless document intelligence: upload PDFs, ask questions, get cited answers. Event-driven ingestion on a queue, a Fargate worker pool that scales itself by metric and sleeps at zero, a two-tier cache in front of the RAG path, dead-letter isolation for bad input, and automatic 24-hour cleanup on every artifact.
+**Upload PDFs, ask questions, get answers with citations.** An event-driven document intelligence service built on AWS, designed to cost nothing when idle and to absorb bursts without falling over.
 
-**Live deployment:** <https://rqy6cawtyg.execute-api.ap-southeast-2.amazonaws.com/documind/>
-(fallback: Lambda function URL — see `submission-a3-infra.yml`)
+Built for CAB432 (Cloud Application Development) at QUT. This repository is the archived record of the build: source, report, architecture diagrams and measured evidence.
 
-## The system in one diagram
+![DocuMind pipeline monitor](docs/figures/fig-1-2-ui-pipeline.png)
 
-Client → (presigned PUT) → S3 → EventBridge → SQS → ECS Fargate workers (0–6, Spot) → Bedrock (Titan embeddings + Gemma answers) → S3 Vectors + DynamoDB. Query API = Lambda (FastAPI) with L1 in-process + L2 DynamoDB cache and an MCP tool endpoint. A controller task reads queue backlog every 60 s and drives the pool: `desired = 0 if backlog = 0 else clamp(ceil(backlog/2), 1, 6)`.
+---
 
-Full reasoning: **`DocuMind-A3-Report.pdf`** (source: `REPORT.md`). Operations & handoff: **`docs/HANDOFF.md`** (state, playbook, sandbox constraints, open items).
+## Why it exists
+
+Reading a stack of PDFs is slow, and searching them is worse. Keyword search misses paraphrase, and most "chat with your documents" tools are either expensive or hostile to your data.
+
+DocuMind takes a narrow slice of that problem. You drag in PDFs, watch them process, then ask questions in plain language. Every answer cites the passages it used. Everything expires after 24 hours, so the service suits material that should not sit on a server indefinitely.
+
+The workload is bursty: a study group dumps a semester of readings at midnight, then nothing for hours. That shape drives the whole architecture.
+
+## Architecture
+
+![AWS architecture](docs/figures/fig-3-1-architecture-aws.png)
+
+Two independent paths share one set of managed services.
+
+**Ingestion** is asynchronous and queue driven:
+
+```
+Browser --presigned PUT--> S3 --ObjectCreated--> EventBridge --> SQS --> Fargate workers
+                                                                          |
+                                                    extract -> chunk -> embed -> summarise
+                                                                          |
+                                                     S3 artifacts + S3 Vectors + DynamoDB
+```
+
+**Query** is stateless and cached:
+
+```
+Client --> API Gateway --> Lambda (FastAPI) --> L1 in-process cache
+                                            --> L2 shared cache
+                                            --> embed -> vector search -> filter -> generate
+```
+
+A controller task reads queue backlog every 60 seconds and sets the worker count:
+
+```python
+desired = 0 if backlog == 0 else clamp(ceil(backlog / 2), 1, 6)
+```
+
+The pool scales to zero. There is no always-on processing tier.
+
+## Measured results
+
+These numbers come from instrumented runs against the deployed system, not estimates.
+
+| What | Result |
+|---|---|
+| Burst absorption | 30 documents, peak backlog 28 messages, pool 1 to 6 workers in one 60 s tick |
+| Scale to zero | pool back to 0 in 1.3 minutes after the last completion |
+| Cache, origin path | p50 2 408 ms, p95 3 339 ms, p99 3 419 ms server side |
+| Cache, hit | 0 ms at L1, 46 ms median round trip over the network |
+| Cache hit rate in test | 112 requests counted, 50 of 50 repeats served from L1 |
+| Fault isolation | password protected, corrupt and blank PDFs to the dead-letter queue, no worker restarts |
+| Functional checklist | 14 of 14 checks passed |
+| Unit tests | 8 of 8, no AWS required |
+
+![Scaling timeline](docs/figures/fig-3-2-scaling-timeline.png)
+
+## Cost
+
+Modelled at 50 concurrent users, 1 000 documents and 3 000 questions a month, using AWS public price-list rates for `ap-southeast-2`.
+
+| | US$ / month |
+|---|---|
+| On-demand total | **16.68** |
+| Fixed floor (controller, dashboard, alarms, secret) | 14.50 |
+| Variable share | 2.18 |
+| With 70 % Fargate Spot | 8.98 |
+
+Two numbers matter more than the total.
+
+**US$0.00075 marginal cost per document.** That is worker compute, embedding and summary generation for one file. The bursty work is the cheapest part of the system, which is exactly why it belongs behind a queue.
+
+**Ten times the demand costs US$36.26.** The fixed floor does not move, so cost per document falls from US$0.0167 to US$0.0036 and the fixed share drops from 87 % to 40 %.
+
+![Cost model](docs/figures/fig-5-2-cost-model.png)
+
+## Cache behaviour
+
+Repeated questions against the same corpus are the dominant interaction pattern, so caching is a core function rather than an optimisation.
+
+![Chat with citations and cache badge](docs/figures/fig-1-3-ui-chat.png)
+
+Tier 1 lives in process, so a hit costs microseconds. Tier 2 is a shared row, so a hit anywhere in the fleet serves every instance. Each response reports which tier answered (`X-Cache: HIT-L1`, `HIT-L2`, `MISS`) and how long it took, so the behaviour is visible per request rather than only in aggregate.
+
+## Engineering decisions worth reading
+
+**Worker pull, not dispatcher push.** Workers long-poll the queue. No dispatcher, no worker address registry, no health checks. Backpressure is implicit: a worker cannot be handed more concurrent messages than it asked for. Failure recovery falls out of the visibility timeout, because a message whose worker died becomes visible again.
+
+**The control law is implemented rather than delegated.** The account's target-tracking scaling APIs were not callable, so scaling runs as a small long-lived task reading queue depth. That turned out better than the managed option: every scaling decision appears as one line in the logs, so the evidence is directly auditable.
+
+**Cache written before the response.** If the reply is lost to a timeout, the retry is served from cache in single digit milliseconds.
+
+**Retrieval filters against live metadata.** One batch read drops chunks whose documents have expired or failed. This is what makes the 24 hour TTL safe: an expired document cannot be cited even before its vectors are reaped.
+
+**Thin queue messages.** The message carries a pointer (`jobId`, bucket, key) and never a payload, so the queue cannot become a shadow database.
+
+**Delete means delete.** Removing a document clears its vectors, its S3 artifacts, its job row and the answer cache, then reports what it removed.
+
+## AWS services used
+
+| Layer | Service |
+|---|---|
+| Ingress | API Gateway (HTTP API), Lambda function URL as a fallback |
+| Query API | Lambda, Python 3.12, FastAPI via Mangum |
+| Ingestion | ECS Fargate Spot, 0 to 6 tasks, worker and controller |
+| Queueing | SQS with a dead-letter queue |
+| Events | S3 event notifications routed through EventBridge |
+| Storage | S3 for uploads, extracted text and summaries, S3 Vectors for embeddings |
+| Metadata and cache | DynamoDB, single table, TTL on every row |
+| AI | Amazon Bedrock: Titan Text Embeddings V2 and Gemma 3 12B |
+| Operations | CloudWatch logs, dashboard and three alarms |
+| Secrets | Secrets Manager for the admin key |
+| Images | ECR |
+
+Fifteen of the sixteen cloud pattern categories are implemented outright. The sixteenth, edge caching, is designed and documented but not deployed.
+
+## Getting started
+
+The application code is self-contained in `backend/` and `frontend/`.
+
+```bash
+# worker unit tests: no AWS needed
+cd backend/worker && python test_local.py
+
+# frontend
+cd frontend
+npm install
+npm run dev
+```
+
+Run the API locally with the dependencies in `backend/api/requirements.txt`. The service reads its configuration from environment variables (bucket, table, queue, model IDs, admin key), so a local run against real AWS needs credentials and provisioned resources. The infrastructure was declared in `submission-a3-infra.yml` and deployed into a course account.
 
 ## Repository layout
 
 ```
 backend/
-  api/        FastAPI service (Mangum) — presign, jobs, query, MCP, static, cache
-  worker/     SQS worker — extract → chunk → embed → summarise → store (+ tests)
-  scaler/     controller task + control law (metric-based autoscaling)
-  Dockerfile  worker/controller image (linux/amd64)
-frontend/     React SPA (dropzone, pipeline monitor, cited chat, cache stats)
-infra/        task definitions (JSON)
-scripts/      deploy-infra.sh (one-shot), load_test.py, smoke_test.py,
-              make_figures.py, capture_ui.mjs, build_report_pdf.py, …
-docs/         REPORT assets: diagrams (SVG), figures (PNG), evidence (JSON/CSV),
-              VIDEO_SCRIPT.md, COST_MODEL.md
-submission-a3-infra.yml   Gradescope infrastructure declaration (26 resources)
-REPORT.md / DocuMind-A3-Report.pdf
+  api/        FastAPI service: presign, jobs, query, MCP, cache, static hosting
+  worker/     SQS worker: extract, chunk, embed, summarise, store, plus unit tests
+  scaler/     controller task implementing the control law
+  Dockerfile  worker and controller image
+frontend/     React 18 + Vite SPA: dropzone, pipeline monitor, cited chat
+docs/
+  figures/    architecture, sequence and UI figures used in the report
+  diagrams/   SVG sources
+  evidence/   measurements behind the numbers above
+REPORT.md                    full write-up
+DocuMind-A3-Report.pdf       formatted report
+submission-a3-infra.yml      infrastructure declaration
 ```
 
-## Quickstart (local)
+## Project status
 
-```bash
-cd backend/worker && python test_local.py        # 8/8 unit tests, no AWS needed
-# deployed-system checks (no AWS creds needed — talks to the live API):
-python scripts/smoke_test.py                     # 14-check end-to-end suite
-python scripts/load_test.py pipeline --count 30  # auto-scaling evidence run
-python scripts/load_test.py cache --queries 50   # caching evidence run
-python scripts/load_test.py dlq                  # fault-isolation run
-```
+**The deployment is temporary by design.** It lives in a university teaching account that gets retired at the end of semester, so its URLs are not a permanent part of this project.
 
-## Deploy (account 901444280953, ap-southeast-2)
+The durable part is preserved here: the source, the architecture, the measured evidence, the figures and the full report. Every screenshot and every number in this README was captured while the system was running.
 
-```bash
-aws sso login
-bash scripts/deploy-infra.sh    # idempotent; builds images, services, routes
-```
+## Acknowledgements
 
-Sandbox notes that shaped the build (see report §3.8): single shared API gateway (ours mounts `/documind/*` additively), no CloudFront / ElastiCache / managed scaling APIs → custom controller + DB-backed L2 cache; Bedrock allow-list = Titan Embed v2 + Gemma 3 12B; every resource tagged `purpose=assessment 3` + `qut-username=n12136514@qut.edu.au`.
+Built on AWS documentation for S3 event notifications, S3 Vectors, EventBridge, SQS, ECS Fargate, DynamoDB TTL, Bedrock and CloudWatch Embedded Metric Format.
 
-## Evidence
-
-`docs/evidence/` holds every number in the report: pipeline timeline CSV/JSON (1→6 workers, 58 s drain, scale back to zero), cache battery (24 misses p50 2 408 ms; 62 hits p50 46 ms round-trip, 0 ms in-process), DLQ run (3 poison classes isolated), smoke runs (14/14).
-
-## Manual steps before submission
-
-1. **AWS Pricing Calculator public link** — reproduce from `docs/COST_MODEL.md` §5 (~10 min), paste the Share link into the report (search for “Pricing Calculator estimate”).
-2. **Demo video (4–5 min)** — follow `docs/VIDEO_SCRIPT.md`; upload to Canvas and click **Submit**.
-3. Gradescope: upload this source tree + `submission-a3-infra.yml`.
-4. Canvas: upload `DocuMind-A3-Report.pdf` + the video.
-
-Remember to delete resources when the unit finishes (report §3.8 lists everything): drop the two ECS services, the rule, the queues, both buckets, the table, the vector bucket, the secret and the Lambda.
+Course material and assessment structure: CAB432, QUT.

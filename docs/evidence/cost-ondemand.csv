@@ -1,0 +1,15 @@
+line_item,basis,monthly_usd
+ECS Fargate - controller task,0.25 vCPU / 0.5 GB x 730 h (on-demand),10.804
+ECS Fargate - worker pool,3.3 vCPU-h + 6.7 GB-h burst,0.1959
+Amazon Bedrock - Titan Text Embeddings V2,8.03M input tokens,0.1606
+Amazon Bedrock - Gemma 3 12B generation,5.12M in / 0.445M out,0.6075
+AWS Lambda,6300 GB-s + 24000 requests,0.1098
+Amazon SQS,8000 requests,0.0032
+Amazon DynamoDB,8000 WRU + 120000 RRU + 0.5 GB,0.1653
+Amazon S3 Standard,2.5 GB + 23000 requests,0.1775
+Amazon S3 Vectors,8k vectors + 5k queries (published list price),0.05
+Amazon CloudWatch,1 dashboard + 3 alarms + 1.0 GB logs,3.97
+AWS Secrets Manager,1 secret,0.4
+Amazon API Gateway (HTTP),24000 requests,0.031
+Amazon EventBridge,1000 events,0.001
+TOTAL,on-demand ap-southeast-2,16.68
